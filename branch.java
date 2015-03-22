@@ -1,4 +1,3 @@
-
 // We need to import the java.sql package to use JDBC
 import java.sql.*;
 
@@ -14,9 +13,8 @@ import java.awt.event.*;
 /*
  * This class implements a graphical login window and a simple text
  * interface for interacting with the branch table 
- */ 
-public class branch implements ActionListener
-{
+ */
+public class branch implements ActionListener {
     // command line reader 
     private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
@@ -33,488 +31,421 @@ public class branch implements ActionListener
 
     /*
      * constructs login window and loads JDBC driver
-     */ 
-    public branch()
-    {
-      mainFrame = new JFrame("User Login");
+     */
+    public branch() {
+        mainFrame = new JFrame("User Login");
 
-      JLabel usernameLabel = new JLabel("Enter username: ");
-      JLabel passwordLabel = new JLabel("Enter password: ");
+        JLabel usernameLabel = new JLabel("Enter username: ");
+        JLabel passwordLabel = new JLabel("Enter password: ");
 
-      usernameField = new JTextField(10);
-      passwordField = new JPasswordField(10);
-      passwordField.setEchoChar('*');
+        usernameField = new JTextField(10);
+        passwordField = new JPasswordField(10);
+        passwordField.setEchoChar('*');
 
-      JButton loginButton = new JButton("Log In");
+        JButton loginButton = new JButton("Log In");
 
-      JPanel contentPane = new JPanel();
-      mainFrame.setContentPane(contentPane);
+        JPanel contentPane = new JPanel();
+        mainFrame.setContentPane(contentPane);
 
 
-      // layout components using the GridBag layout manager
+        // layout components using the GridBag layout manager
 
-      GridBagLayout gb = new GridBagLayout();
-      GridBagConstraints c = new GridBagConstraints();
+        GridBagLayout gb = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
 
-      contentPane.setLayout(gb);
-      contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        contentPane.setLayout(gb);
+        contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-      // place the username label 
-      c.gridwidth = GridBagConstraints.RELATIVE;
-      c.insets = new Insets(10, 10, 5, 0);
-      gb.setConstraints(usernameLabel, c);
-      contentPane.add(usernameLabel);
+        // place the username label
+        c.gridwidth = GridBagConstraints.RELATIVE;
+        c.insets = new Insets(10, 10, 5, 0);
+        gb.setConstraints(usernameLabel, c);
+        contentPane.add(usernameLabel);
 
-      // place the text field for the username 
-      c.gridwidth = GridBagConstraints.REMAINDER;
-      c.insets = new Insets(10, 0, 5, 10);
-      gb.setConstraints(usernameField, c);
-      contentPane.add(usernameField);
+        // place the text field for the username
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.insets = new Insets(10, 0, 5, 10);
+        gb.setConstraints(usernameField, c);
+        contentPane.add(usernameField);
 
-      // place password label
-      c.gridwidth = GridBagConstraints.RELATIVE;
-      c.insets = new Insets(0, 10, 10, 0);
-      gb.setConstraints(passwordLabel, c);
-      contentPane.add(passwordLabel);
+        // place password label
+        c.gridwidth = GridBagConstraints.RELATIVE;
+        c.insets = new Insets(0, 10, 10, 0);
+        gb.setConstraints(passwordLabel, c);
+        contentPane.add(passwordLabel);
 
-      // place the password field 
-      c.gridwidth = GridBagConstraints.REMAINDER;
-      c.insets = new Insets(0, 0, 10, 10);
-      gb.setConstraints(passwordField, c);
-      contentPane.add(passwordField);
+        // place the password field
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.insets = new Insets(0, 0, 10, 10);
+        gb.setConstraints(passwordField, c);
+        contentPane.add(passwordField);
 
-      // place the login button
-      c.gridwidth = GridBagConstraints.REMAINDER;
-      c.insets = new Insets(5, 10, 10, 10);
-      c.anchor = GridBagConstraints.CENTER;
-      gb.setConstraints(loginButton, c);
-      contentPane.add(loginButton);
+        // place the login button
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.insets = new Insets(5, 10, 10, 10);
+        c.anchor = GridBagConstraints.CENTER;
+        gb.setConstraints(loginButton, c);
+        contentPane.add(loginButton);
 
-      // register password field and OK button with action event handler
-      passwordField.addActionListener(this);
-      loginButton.addActionListener(this);
+        // register password field and OK button with action event handler
+        passwordField.addActionListener(this);
+        loginButton.addActionListener(this);
 
-      // anonymous inner class for closing the window
-      mainFrame.addWindowListener(new WindowAdapter() 
-      {
-	public void windowClosing(WindowEvent e) 
-	{ 
-	  System.exit(0); 
-	}
-      });
+        // anonymous inner class for closing the window
+        mainFrame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
 
-      // size the window to obtain a best fit for the components
-      mainFrame.pack();
+        // size the window to obtain a best fit for the components
+        mainFrame.pack();
 
-      // center the frame
-      Dimension d = mainFrame.getToolkit().getScreenSize();
-      Rectangle r = mainFrame.getBounds();
-      mainFrame.setLocation( (d.width - r.width)/2, (d.height - r.height)/2 );
+        // center the frame
+        Dimension d = mainFrame.getToolkit().getScreenSize();
+        Rectangle r = mainFrame.getBounds();
+        mainFrame.setLocation((d.width - r.width) / 2, (d.height - r.height) / 2);
 
-      // make the window visible
-      mainFrame.setVisible(true);
+        // make the window visible
+        mainFrame.setVisible(true);
 
-      // place the cursor in the text field for the username
-      usernameField.requestFocus();
+        // place the cursor in the text field for the username
+        usernameField.requestFocus();
 
-      try 
-      {
-	// Load the Oracle JDBC driver
-	DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-      }
-      catch (SQLException ex)
-      {
-	System.out.println("Message: " + ex.getMessage());
-	System.exit(-1);
-      }
+        try {
+            // Load the Oracle JDBC driver
+            DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+            System.exit(-1);
+        }
     }
 
 
     /*
      * connects to Oracle database named ug using user supplied username and password
-     */ 
-    private boolean connect(String username, String password)
-    {
-      String connectURL = "jdbc:oracle:thin:@dbhost.ugrad.cs.ubc.ca:1522:ug"; 
+     */
+    private boolean connect(String username, String password) {
+        String connectURL = "jdbc:oracle:thin:@dbhost.ugrad.cs.ubc.ca:1522:ug";
 
-      try 
-      {
-	con = DriverManager.getConnection(connectURL,username,password);
+        try {
+            con = DriverManager.getConnection(connectURL, username, password);
 
-	System.out.println("\nConnected to Oracle!");
-	return true;
-      }
-      catch (SQLException ex)
-      {
-	System.out.println("Message: " + ex.getMessage());
-	return false;
-      }
+            System.out.println("\nConnected to Oracle!");
+            return true;
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+            return false;
+        }
     }
 
 
     /*
      * event handler for login window
-     */ 
-    public void actionPerformed(ActionEvent e) 
-    {
-	if ( connect(usernameField.getText(), String.valueOf(passwordField.getPassword())) )
-	{
-	  // if the username and password are valid, 
-	  // remove the login window and display a text menu 
-	  mainFrame.dispose();
-          showMenu();     
-	}
-	else
-	{
-	  loginAttempts++;
-	  
-	  if (loginAttempts >= 3)
-	  {
-	      mainFrame.dispose();
-	      System.exit(-1);
-	  }
-	  else
-	  {
-	      // clear the password
-	      passwordField.setText("");
-	  }
-	}             
-                    
+     */
+    public void actionPerformed(ActionEvent e) {
+        if (connect(usernameField.getText(), String.valueOf(passwordField.getPassword()))) {
+            // if the username and password are valid,
+            // remove the login window and display a text menu
+            mainFrame.dispose();
+            showMenu();
+        } else {
+            loginAttempts++;
+
+            if (loginAttempts >= 3) {
+                mainFrame.dispose();
+                System.exit(-1);
+            } else {
+                // clear the password
+                passwordField.setText("");
+            }
+        }
+
     }
 
 
     /*
      * displays simple text interface
-     */ 
-    private void showMenu()
-    {
-	int choice;
-	boolean quit;
+     */
+    private void showMenu() {
+        int choice;
+        boolean quit;
 
-	quit = false;
-	
-	try 
-	{
-	    // disable auto commit mode
-	    con.setAutoCommit(false);
+        quit = false;
 
-	    while (!quit)
-	    {
-		System.out.print("\n\nPlease choose one of the following: \n");
-		System.out.print("1.  Insert branch\n");
-		System.out.print("2.  Delete branch\n");
-		System.out.print("3.  Update branch\n");
-		System.out.print("4.  Show branch\n");
-		System.out.print("5.  Quit\n>> ");
+        try {
+            // disable auto commit mode
+            con.setAutoCommit(false);
 
-		choice = Integer.parseInt(in.readLine());
-		
-		System.out.println(" ");
+            while (!quit) {
+                System.out.print("\n\nPlease choose one of the following: \n");
+                System.out.print("1.  Insert branch\n");
+                System.out.print("2.  Delete branch\n");
+                System.out.print("3.  Update branch\n");
+                System.out.print("4.  Show branch\n");
+                System.out.print("5.  Quit\n>> ");
 
-		switch(choice)
-		{
-		   case 1:  insertBranch(); break;
-		   case 2:  deleteBranch(); break;
-		   case 3:  updateBranch(); break;
-		   case 4:  showBranch(); break;
-		   case 5:  quit = true;
-		}
-	    }
+                choice = Integer.parseInt(in.readLine());
 
-	    con.close();
+                System.out.println(" ");
+
+                switch (choice) {
+                    case 1:
+                        insertBranch();
+                        break;
+                    case 2:
+                        deleteBranch();
+                        break;
+                    case 3:
+                        updateBranch();
+                        break;
+                    case 4:
+                        showBranch();
+                        break;
+                    case 5:
+                        quit = true;
+                }
+            }
+
+            con.close();
             in.close();
-	    System.out.println("\nGood Bye!\n\n");
-	    System.exit(0);
-	}
-	catch (IOException e)
-	{
-	    System.out.println("IOException!");
+            System.out.println("\nGood Bye!\n\n");
+            System.exit(0);
+        } catch (IOException e) {
+            System.out.println("IOException!");
 
-	    try
-	    {
-		con.close();
-		System.exit(-1);
-	    }
-	    catch (SQLException ex)
-	    {
-		 System.out.println("Message: " + ex.getMessage());
-	    }
-	}
-	catch (SQLException ex)
-	{
-	    System.out.println("Message: " + ex.getMessage());
-	}
+            try {
+                con.close();
+                System.exit(-1);
+            } catch (SQLException ex) {
+                System.out.println("Message: " + ex.getMessage());
+            }
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }
     }
 
 
     /*
      * inserts a branch
-     */ 
-    private void insertBranch()
-    {
-	int                bid;
-	String             bname;
-	String             baddr;
-	String             bcity;
-	int                bphone;
-	PreparedStatement  ps;
-	  
-	try
-	{
-	  ps = con.prepareStatement("INSERT INTO branch VALUES (?,?,?,?,?)");
-	
-	  System.out.print("\nBranch ID: ");
-	  bid = Integer.parseInt(in.readLine());
-	  ps.setInt(1, bid);
+     */
+    private void insertBranch() {
+        int bid;
+        String bname;
+        String baddr;
+        String bcity;
+        int bphone;
+        PreparedStatement ps;
 
-	  System.out.print("\nBranch Name: ");
-	  bname = in.readLine();
-	  ps.setString(2, bname);
+        try {
+            ps = con.prepareStatement("INSERT INTO branch VALUES (?,?,?,?,?)");
 
-	  System.out.print("\nBranch Address: ");
-	  baddr = in.readLine();
-	  
-	  if (baddr.length() == 0)
-          {
-	      ps.setString(3, null);
-	  }
-	  else
-	  {
-	      ps.setString(3, baddr);
-	  }
-	 
-	  System.out.print("\nBranch City: ");
-	  bcity = in.readLine();
-	  ps.setString(4, bcity);
+            System.out.print("\nBranch ID: ");
+            bid = Integer.parseInt(in.readLine());
+            ps.setInt(1, bid);
 
-	  System.out.print("\nBranch Phone: ");
-	  String phoneTemp = in.readLine();
-	  if (phoneTemp.length() == 0)
-	  {
-	      ps.setNull(5, java.sql.Types.INTEGER);
-	  }
-	  else
-	  {
-	      bphone = Integer.parseInt(phoneTemp);
-	      ps.setInt(5, bphone);
-	  }
+            System.out.print("\nBranch Name: ");
+            bname = in.readLine();
+            ps.setString(2, bname);
 
-	  ps.executeUpdate();
+            System.out.print("\nBranch Address: ");
+            baddr = in.readLine();
 
-	  // commit work 
-	  con.commit();
+            if (baddr.length() == 0) {
+                ps.setString(3, null);
+            } else {
+                ps.setString(3, baddr);
+            }
 
-	  ps.close();
-	}
-	catch (IOException e)
-	{
-	    System.out.println("IOException!");
-	}
-	catch (SQLException ex)
-	{
-	    System.out.println("Message: " + ex.getMessage());
-	    try 
-	    {
-		// undo the insert
-		con.rollback();	
-	    }
-	    catch (SQLException ex2)
-	    {
-		System.out.println("Message: " + ex2.getMessage());
-		System.exit(-1);
-	    }
-	}
+            System.out.print("\nBranch City: ");
+            bcity = in.readLine();
+            ps.setString(4, bcity);
+
+            System.out.print("\nBranch Phone: ");
+            String phoneTemp = in.readLine();
+            if (phoneTemp.length() == 0) {
+                ps.setNull(5, java.sql.Types.INTEGER);
+            } else {
+                bphone = Integer.parseInt(phoneTemp);
+                ps.setInt(5, bphone);
+            }
+
+            ps.executeUpdate();
+
+            // commit work
+            con.commit();
+
+            ps.close();
+        } catch (IOException e) {
+            System.out.println("IOException!");
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+            try {
+                // undo the insert
+                con.rollback();
+            } catch (SQLException ex2) {
+                System.out.println("Message: " + ex2.getMessage());
+                System.exit(-1);
+            }
+        }
     }
 
 
     /*
      * deletes a branch
-     */ 
-    private void deleteBranch()
-    {
-	int                bid;
-	PreparedStatement  ps;
-	  
-	try
-	{
-	  ps = con.prepareStatement("DELETE FROM branch WHERE branch_id = ?");
-	
-	  System.out.print("\nBranch ID: ");
-	  bid = Integer.parseInt(in.readLine());
-	  ps.setInt(1, bid);
+     */
+    private void deleteBranch() {
+        int bid;
+        PreparedStatement ps;
 
-	  int rowCount = ps.executeUpdate();
+        try {
+            ps = con.prepareStatement("DELETE FROM branch WHERE branch_id = ?");
 
-	  if (rowCount == 0)
-	  {
-	      System.out.println("\nBranch " + bid + " does not exist!");
-	  }
+            System.out.print("\nBranch ID: ");
+            bid = Integer.parseInt(in.readLine());
+            ps.setInt(1, bid);
 
-	  con.commit();
+            int rowCount = ps.executeUpdate();
 
-	  ps.close();
-	}
-	catch (IOException e)
-	{
-	    System.out.println("IOException!");
-	}
-	catch (SQLException ex)
-	{
-	    System.out.println("Message: " + ex.getMessage());
+            if (rowCount == 0) {
+                System.out.println("\nBranch " + bid + " does not exist!");
+            }
 
-            try 
-	    {
-		con.rollback();	
-	    }
-	    catch (SQLException ex2)
-	    {
-		System.out.println("Message: " + ex2.getMessage());
-		System.exit(-1);
-	    }
-	}
+            con.commit();
+
+            ps.close();
+        } catch (IOException e) {
+            System.out.println("IOException!");
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+
+            try {
+                con.rollback();
+            } catch (SQLException ex2) {
+                System.out.println("Message: " + ex2.getMessage());
+                System.exit(-1);
+            }
+        }
     }
-    
+
 
     /*
      * updates the name of a branch
-     */ 
-    private void updateBranch()
-    {
-	int                bid;
-	String             bname;
-	PreparedStatement  ps;
-	  
-	try
-	{
-	  ps = con.prepareStatement("UPDATE branch SET branch_name = ? WHERE branch_id = ?");
-	
-	  System.out.print("\nBranch ID: ");
-	  bid = Integer.parseInt(in.readLine());
-	  ps.setInt(2, bid);
+     */
+    private void updateBranch() {
+        int bid;
+        String bname;
+        PreparedStatement ps;
 
-	  System.out.print("\nBranch Name: ");
-	  bname = in.readLine();
-	  ps.setString(1, bname);
+        try {
+            ps = con.prepareStatement("UPDATE branch SET branch_name = ? WHERE branch_id = ?");
 
-	  int rowCount = ps.executeUpdate();
-	  if (rowCount == 0)
-	  {
-	      System.out.println("\nBranch " + bid + " does not exist!");
-	  }
+            System.out.print("\nBranch ID: ");
+            bid = Integer.parseInt(in.readLine());
+            ps.setInt(2, bid);
 
-	  con.commit();
+            System.out.print("\nBranch Name: ");
+            bname = in.readLine();
+            ps.setString(1, bname);
 
-	  ps.close();
-	}
-	catch (IOException e)
-	{
-	    System.out.println("IOException!");
-	}
-	catch (SQLException ex)
-	{
-	    System.out.println("Message: " + ex.getMessage());
-	    
-	    try 
-	    {
-		con.rollback();	
-	    }
-	    catch (SQLException ex2)
-	    {
-		System.out.println("Message: " + ex2.getMessage());
-		System.exit(-1);
-	    }
-	}	
+            int rowCount = ps.executeUpdate();
+            if (rowCount == 0) {
+                System.out.println("\nBranch " + bid + " does not exist!");
+            }
+
+            con.commit();
+
+            ps.close();
+        } catch (IOException e) {
+            System.out.println("IOException!");
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+
+            try {
+                con.rollback();
+            } catch (SQLException ex2) {
+                System.out.println("Message: " + ex2.getMessage());
+                System.exit(-1);
+            }
+        }
     }
 
-    
+
     /*
      * display information about branches
-     */ 
-    private void showBranch()
-    {
-	String     bid;
-	String     bname;
-	String     baddr;
-	String     bcity;
-	String     bphone;
-	Statement  stmt;
-	ResultSet  rs;
-	   
-	try
-	{
-	  stmt = con.createStatement();
+     */
+    private void showBranch() {
+        String bid;
+        String bname;
+        String baddr;
+        String bcity;
+        String bphone;
+        Statement stmt;
+        ResultSet rs;
 
-	  rs = stmt.executeQuery("SELECT * FROM branch");
+        try {
+            stmt = con.createStatement();
 
-	  // get info on ResultSet
-	  ResultSetMetaData rsmd = rs.getMetaData();
+            rs = stmt.executeQuery("SELECT * FROM branch");
 
-	  // get number of columns
-	  int numCols = rsmd.getColumnCount();
+            // get info on ResultSet
+            ResultSetMetaData rsmd = rs.getMetaData();
 
-	  System.out.println(" ");
-	  
-	  // display column names;
-	  for (int i = 0; i < numCols; i++)
-	  {
-	      // get column name and print it
+            // get number of columns
+            int numCols = rsmd.getColumnCount();
 
-	      System.out.printf("%-15s", rsmd.getColumnName(i+1));    
-	  }
+            System.out.println(" ");
 
-	  System.out.println(" ");
+            // display column names;
+            for (int i = 0; i < numCols; i++) {
+                // get column name and print it
 
-	  while(rs.next())
-	  {
-	      // for display purposes get everything from Oracle 
-	      // as a string
+                System.out.printf("%-15s", rsmd.getColumnName(i + 1));
+            }
 
-	      // simplified output formatting; truncation may occur
+            System.out.println(" ");
 
-	      bid = rs.getString("branch_id");
-	      System.out.printf("%-10.10s", bid);
+            while (rs.next()) {
+                // for display purposes get everything from Oracle
+                // as a string
 
-	      bname = rs.getString("branch_name");
-	      System.out.printf("%-20.20s", bname);
+                // simplified output formatting; truncation may occur
 
-	      baddr = rs.getString("branch_addr");
-	      if (rs.wasNull())
-	      {
-	    	  System.out.printf("%-20.20s", " ");
-              }
-	      else
-	      {
-	    	  System.out.printf("%-20.20s", baddr);
-	      }
+                bid = rs.getString("branch_id");
+                System.out.printf("%-10.10s", bid);
 
-	      bcity = rs.getString("branch_city");
-	      System.out.printf("%-15.15s", bcity);
+                bname = rs.getString("branch_name");
+                System.out.printf("%-20.20s", bname);
 
-	      bphone = rs.getString("branch_phone");
-	      if (rs.wasNull())
-	      {
-	    	  System.out.printf("%-15.15s\n", " ");
-              }
-	      else
-	      {
-	    	  System.out.printf("%-15.15s\n", bphone);
-	      }      
-	  }
- 
-	  // close the statement; 
-	  // the ResultSet will also be closed
-	  stmt.close();
-	}
-	catch (SQLException ex)
-	{
-	    System.out.println("Message: " + ex.getMessage());
-	}	
+                baddr = rs.getString("branch_addr");
+                if (rs.wasNull()) {
+                    System.out.printf("%-20.20s", " ");
+                } else {
+                    System.out.printf("%-20.20s", baddr);
+                }
+
+                bcity = rs.getString("branch_city");
+                System.out.printf("%-15.15s", bcity);
+
+                bphone = rs.getString("branch_phone");
+                if (rs.wasNull()) {
+                    System.out.printf("%-15.15s\n", " ");
+                } else {
+                    System.out.printf("%-15.15s\n", bphone);
+                }
+            }
+
+            // close the statement;
+            // the ResultSet will also be closed
+            stmt.close();
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }
     }
-    
- 
-    public static void main(String args[])
-    {
-      branch b = new branch();
+
+
+    public static void main(String args[]) {
+        branch b = new branch();
     }
 }
 
