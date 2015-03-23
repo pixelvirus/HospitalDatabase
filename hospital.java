@@ -10,9 +10,9 @@ import java.util.ArrayList;
 
 /*
  * This class implements a graphical login window and a simple text
- * interface for interacting with the hospital table
+ * interface for interacting with the Hospital table
  */
-public class hospital implements ActionListener {
+public class Hospital implements ActionListener {
     // command line reader 
     private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
@@ -29,7 +29,7 @@ public class hospital implements ActionListener {
     /*
      * constructs login window and loads JDBC driver
      */
-    public hospital() {
+    public Hospital() {
         mainFrame = new JFrame("User Login");
 
         JLabel usernameLabel = new JLabel("Enter username: ");
@@ -160,8 +160,7 @@ public class hospital implements ActionListener {
      */
     private void showMenu() {
         int choice;
-        boolean quit;
-        quit = false;
+        boolean quit = false;
 
         try {
             // disable auto commit mode
@@ -208,11 +207,10 @@ public class hospital implements ActionListener {
      * run sql directly
      */
     private void runSql() {
-        PreparedStatement ps;
         try {
             System.out.print("\nEnter sql: ");
             String sql = in.readLine();
-            ps = con.prepareCall(sql);
+            PreparedStatement ps = con.prepareCall(sql);
             ps.executeUpdate();
             // commit work
             con.commit();
@@ -352,8 +350,7 @@ public class hospital implements ActionListener {
      */
     private void modifyTable(String tableName) {
         int choice;
-        boolean quit;
-        quit = false;
+        boolean quit = false;
 
         try {
             // disable auto commit mode
@@ -365,7 +362,7 @@ public class hospital implements ActionListener {
                 System.out.print("2.  Delete " + tableName + "\n");
                 System.out.print("3.  Update " + tableName + "\n");
                 System.out.print("4.  Show " + tableName + "\n");
-                System.out.print("6.  Back\n>> ");
+                System.out.print("5.  Back\n>> ");
 
                 choice = Integer.parseInt(in.readLine());
                 System.out.println(" ");
@@ -383,7 +380,7 @@ public class hospital implements ActionListener {
                     case 4:
                         showTable(tableName);
                         break;
-                    case 6:
+                    case 5:
                         quit = true;
                 }
             }
@@ -402,18 +399,12 @@ public class hospital implements ActionListener {
     }
 
     /*
-     * inserts a hospital
+     * inserts a Hospital
      */
     private void insertIntoTable(String tableName) {
-        int bid;
-        String bname;
-        String baddr;
-        String bcity;
-        int bphone;
-        PreparedStatement ps;
-
         try {
-//            ps = con.prepareStatement("INSERT INTO hospital VALUES (?,?,?,?,?)");
+            PreparedStatement ps;
+//            ps = con.prepareStatement("INSERT INTO Hospital VALUES (?,?,?,?,?)");
 
 //            System.out.print("\nBranch ID: ");
 //            bid = Integer.parseInt(in.readLine());
@@ -468,30 +459,39 @@ public class hospital implements ActionListener {
     }
 
     /*
-     * deletes a hospital
+     * deletes a Hospital
      */
     private void deleteFromTable(String tableName) {
-        int bid;
-        PreparedStatement ps;
-
         try {
-            ps = con.prepareStatement("DELETE FROM hospital WHERE branch_id = ?");
+            Statement statement = con.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
+            ResultSetMetaData metaData = resultSet.getMetaData();
 
-            System.out.print("\nBranch ID: ");
-            bid = Integer.parseInt(in.readLine());
-            ps.setInt(1, bid);
+            DatabaseMetaData dbMetaData = con.getMetaData();
+            ResultSet primaryKeys = dbMetaData.getPrimaryKeys(null, null, tableName);
 
-            int rowCount = ps.executeUpdate();
-
-            if (rowCount == 0) {
-                System.out.println("\nBranch " + bid + " does not exist!");
+            while(primaryKeys.next()){
+                System.out.println("test");
+                System.out.println(primaryKeys.getString("COLUMN_NAME"));
             }
 
-            con.commit();
-
-            ps.close();
-        } catch (IOException e) {
-            System.out.println("IOException!");
+//            ps = con.prepareStatement("DELETE FROM Hospital WHERE branch_id = ?");
+//
+//            System.out.print("\nBranch ID: ");
+//            bid = Integer.parseInt(in.readLine());
+//            ps.setInt(1, bid);
+//
+//            int rowCount = ps.executeUpdate();
+//
+//            if (rowCount == 0) {
+//                System.out.println("\nBranch " + bid + " does not exist!");
+//            }
+//
+//            con.commit();
+//
+//            ps.close();
+//        } catch (IOException e) {
+//            System.out.println("IOException!");
         } catch (SQLException ex) {
             System.out.println("Message: " + ex.getMessage());
 
@@ -505,7 +505,7 @@ public class hospital implements ActionListener {
     }
 
     /*
-     * updates the name of a hospital
+     * updates the name of a Hospital
      */
     private void updateTable(String tableName) {
         int bid;
@@ -513,7 +513,7 @@ public class hospital implements ActionListener {
         PreparedStatement ps;
 
         try {
-            ps = con.prepareStatement("UPDATE hospital SET branch_name = ? WHERE branch_id = ?");
+            ps = con.prepareStatement("UPDATE Hospital SET branch_name = ? WHERE branch_id = ?");
 
             System.out.print("\nBranch ID: ");
             bid = Integer.parseInt(in.readLine());
@@ -551,18 +551,18 @@ public class hospital implements ActionListener {
         try {
             Statement statement = con.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
-            ResultSetMetaData metaData = resultSet.getMetaData();
+            ResultSetMetaData rsMetaData = resultSet.getMetaData();
 
             // get number of columns
-            int numCols = metaData.getColumnCount();
+            int numCols = rsMetaData.getColumnCount();
 
             ArrayList<String> availableColumns = new ArrayList<String>();
             ArrayList<Integer> columnWidths = new ArrayList<Integer>();
 
             // display column names
-            for (int i = 1; i < numCols; i++) {
-                int displaySize = metaData.getColumnDisplaySize(i) + 1;
-                String columnName = metaData.getColumnName(i);
+            for (int i = 1; i <= numCols; i++) {
+                int displaySize = rsMetaData.getColumnDisplaySize(i) + 1;
+                String columnName = rsMetaData.getColumnName(i);
                 availableColumns.add(columnName);
                 columnWidths.add(displaySize);
                 System.out.printf("%-" + displaySize + "." + displaySize + "s", columnName);
@@ -585,7 +585,7 @@ public class hospital implements ActionListener {
     }
 
     public static void main(String args[]) {
-        hospital b = new hospital();
+        Hospital hospital = new Hospital();
     }
 }
 
