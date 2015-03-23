@@ -6,6 +6,7 @@ import java.io.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 /*
  * This class implements a graphical login window and a simple text
@@ -364,25 +365,29 @@ public class hospital implements ActionListener {
                 System.out.print("2.  Delete " + tableName + "\n");
                 System.out.print("3.  Update " + tableName + "\n");
                 System.out.print("4.  Show " + tableName + "\n");
-                System.out.print("5.  Back\n>> ");
+                System.out.print("5.  Test get column names");
+                System.out.print("6.  Back\n>> ");
 
                 choice = Integer.parseInt(in.readLine());
                 System.out.println(" ");
 
                 switch (choice) {
                     case 1:
-                        insertTable(tableName);
+                        insertIntoTable(tableName);
                         break;
                     case 2:
-                        deleteTable();
+                        deleteFromTable(tableName);
                         break;
                     case 3:
-                        updateTable();
+                        updateTable(tableName);
                         break;
                     case 4:
-                        showTable();
+                        showTable(tableName);
                         break;
                     case 5:
+                        testGetColumns(tableName);
+                        break;
+                    case 6:
                         quit = true;
                 }
             }
@@ -403,7 +408,7 @@ public class hospital implements ActionListener {
     /*
      * inserts a hospital
      */
-    private void insertTable(String tableName) {
+    private void insertIntoTable(String tableName) {
         int bid;
         String bname;
         String baddr;
@@ -469,7 +474,7 @@ public class hospital implements ActionListener {
     /*
      * deletes a hospital
      */
-    private void deleteTable() {
+    private void deleteFromTable(String tableName) {
         int bid;
         PreparedStatement ps;
 
@@ -506,7 +511,7 @@ public class hospital implements ActionListener {
     /*
      * updates the name of a hospital
      */
-    private void updateTable() {
+    private void updateTable(String tableName) {
         int bid;
         String bname;
         PreparedStatement ps;
@@ -544,100 +549,63 @@ public class hospital implements ActionListener {
     }
 
     /*
-     * display information about branches
+     * test
      */
-    private void showTable() {
-        String pt_id;
-        String pt_name;
-        String phone;
-        String address;
-        String city;
-        String province;
-        String zip;
-        String insurance;
-        Statement stmt;
-        ResultSet rs;
-
+    private void testGetColumns(String tableName) {
+        PreparedStatement ps;
         try {
-            stmt = con.createStatement();
+            ps = con.prepareCall("SELECT table_name, column_name, data_type, data_length FROM USER_TAB_COLUMNS WHERE table_name = '" + tableName + "'");
+            ps.executeUpdate();
+            // commit work
+            con.commit();
+            ps.close();
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+            try {
+                // undo the insert
+                con.rollback();
+            } catch (SQLException ex2) {
+                System.out.println("Message: " + ex2.getMessage());
+                System.exit(-1);
+            }
+        }
+    }
 
-            rs = stmt.executeQuery("SELECT * FROM patients");
-
-            // get info on ResultSet
-            ResultSetMetaData rsmd = rs.getMetaData();
+    /*
+     * display table rows
+     */
+    private void showTable(String tableName) {
+        try {
+            Statement statement = con.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
+            ResultSetMetaData metaData = resultSet.getMetaData();
 
             // get number of columns
-            int numCols = rsmd.getColumnCount();
+            int numCols = metaData.getColumnCount();
 
-            System.out.println(" ");
+            ArrayList<String> availableColumns = new ArrayList<String>();
+            ArrayList<Integer> columnWidths = new ArrayList<Integer>();
 
-            // display column names;
-            for (int i = 0; i < numCols; i++) {
-                // get column name and print it
-
-                System.out.printf("%-15s", rsmd.getColumnName(i + 1));
+            // display column names
+            for (int i = 1; i < numCols; i++) {
+                int displaySize = metaData.getColumnDisplaySize(i) + 1;
+                String columnName = metaData.getColumnName(i);
+                availableColumns.add(columnName);
+                columnWidths.add(displaySize);
+                System.out.printf("%-" + displaySize + "." + displaySize + "s", columnName);
             }
+            System.out.println("\n");
 
-            System.out.println(" ");
-
-            while (rs.next()) {
-                // for display purposes get everything from Oracle
-                // as a string
-
-                // simplified output formatting; truncation may occur
-
-                pt_id = rs.getString("pt_id");
-                System.out.printf("%-10.10s", pt_id);
-
-                pt_name = rs.getString("pt_name");
-                System.out.printf("%-20.20s", pt_name);
-
-                phone = rs.getString("phone");
-                if (rs.wasNull()) {
-                    System.out.printf("%-15.15s\n", " ");
-                } else {
-                    System.out.printf("%-15.15s\n", phone);
+            while (resultSet.next()) {
+                for (int i = 0; i < availableColumns.size(); i++) {
+                    String columnName = availableColumns.get(i);
+                    Integer columnSize = columnWidths.get(i);
+                    String rowData = resultSet.getString(columnName);
+                    System.out.printf("%-" + columnSize + "." + columnSize + "s", rowData);
                 }
-
-                address = rs.getString("address");
-                if (rs.wasNull()) {
-                    System.out.printf("%-20.20s", " ");
-                } else {
-                    System.out.printf("%-20.20s", address);
-                }
-
-                city = rs.getString("city");
-                if (rs.wasNull()) {
-                    System.out.printf("%-15.15s", " ");
-                } else {
-                    System.out.printf("%-15.15s", city);
-                }
-
-                province = rs.getString("province");
-                if (rs.wasNull()) {
-                    System.out.printf("%-15.15s", " ");
-                } else {
-                    System.out.printf("%-15.15s", province);
-                }
-
-                zip = rs.getString("zip");
-                if (rs.wasNull()) {
-                    System.out.printf("%-15.15s", " ");
-                } else {
-                    System.out.printf("%-15.15s", zip);
-                }
-
-                insurance = rs.getString("insurance");
-                if (rs.wasNull()) {
-                    System.out.printf("%-15.15s", " ");
-                } else {
-                    System.out.printf("%-15.15s", insurance);
-                }
+                System.out.println("\n");
             }
-
-            // close the statement;
-            // the ResultSet will also be closed
-            stmt.close();
+            statement.close();
         } catch (SQLException ex) {
             System.out.println("Message: " + ex.getMessage());
         }
