@@ -370,10 +370,10 @@ public class Hospital implements ActionListener {
                         deleteFromTable(tblUpperCase);
                         break;
                     case 3:
-                        updateTable(tblUpperCase);
+                        updateTableValue(tblUpperCase);
                         break;
                     case 4:
-                        showTable(tblUpperCase);
+                        showTableRows(tblUpperCase);
                         break;
                     case 5:
                         quit = true;
@@ -397,32 +397,25 @@ public class Hospital implements ActionListener {
      */
     private void insertIntoTable(String tableName) {
         try {
-            //PreparedStatement ps;
-            Statement statement = con.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
-            ResultSetMetaData rsMetaData = resultSet.getMetaData();
-
-            // get number of columns
-            int numCols = rsMetaData.getColumnCount();
-            ArrayList<String> availableColumns = new ArrayList<String>();
-
-            // get column names
-            for (int i = 1; i <= numCols; i++) {
-                availableColumns.add(rsMetaData.getColumnName(i));
+            // get table columns
+            ArrayList<String> availableColumns = getTableColumns(tableName);
+            if (availableColumns.size() == 0) {
+                System.out.println("No columns found!");
+                return;
             }
 
             // construct the insert sql statement
             String query = "INSERT INTO " + tableName + " VALUES (";
-            for (int i = 0; i < numCols; i++) {
+            for (int i = 0; i < availableColumns.size(); i++) {
                 query = query.concat("?,");
             }
             query = query.substring(0,query.length()-1).concat(")");
 
             PreparedStatement preparedStatement = con.prepareStatement(query);
             // get insert values from user
-            for (int i = 1; i <= numCols; i++) {
+            for (int i = 1; i <= availableColumns.size(); i++) {
                 String columnName = availableColumns.get(i-1);
-                String columnType = findType(tableName, columnName);
+                String columnType = getColumnType(tableName, columnName);
 
                 System.out.print("\n" + columnName + ": ");
                 if (columnType.equals("NUMBER")) {
@@ -433,7 +426,6 @@ public class Hospital implements ActionListener {
                     preparedStatement.setString(i, value);
                 }
             }
-
             preparedStatement.executeUpdate();
             con.commit();
             preparedStatement.close();
@@ -456,24 +448,16 @@ public class Hospital implements ActionListener {
      */
     private void deleteFromTable(String tableName) {
         try {
-            // find primary keys of table
-            DatabaseMetaData dbMetaData = con.getMetaData();
-            ResultSet resultSet = dbMetaData.getPrimaryKeys(null, null, tableName);
-            ArrayList<String> primaryKeys = new ArrayList<String>();
-            while (resultSet.next()) {
-                primaryKeys.add(resultSet.getString("COLUMN_NAME"));
-            }
 
-            // check that we found a primary key
-            if (primaryKeys.size() == 0) {
+            // find the primary key of table
+            String primaryKey = getPrimaryKey(tableName);
+            if (primaryKey.equals("")) {
                 System.out.println("No primary key found!");
                 return;
             }
 
-            // get value for primary key and run delete sql
-            String primaryKey = primaryKeys.get(0);
             // get data type of primary key
-            String columnType = findType(tableName, primaryKey);
+            String columnType = getColumnType(tableName, primaryKey);
 
             // get value of primary key
             PreparedStatement ps = con.prepareStatement("DELETE FROM " + tableName + " WHERE " + primaryKey + " = ?");
@@ -491,7 +475,6 @@ public class Hospital implements ActionListener {
             if (rowCount == 0) {
                 System.out.println("\n" + primaryKey + " does not exist!");
             }
-
             con.commit();
             ps.close();
         } catch (IOException e) {
@@ -510,31 +493,73 @@ public class Hospital implements ActionListener {
     /*
      * update the field of a table
      */
-    private void updateTable(String tableName) {
-        int bid;
-        String bname;
-        PreparedStatement ps;
-
+    private void updateTableValue(String tableName) {
         try {
-            ps = con.prepareStatement("UPDATE Hospital SET branch_name = ? WHERE branch_id = ?");
+            // find the primary key of table
+            String primaryKey = getPrimaryKey(tableName);
+            if (primaryKey.equals("")) {
+                System.out.println("No primary key found!");
+                return;
+            }
 
-            System.out.print("\nBranch ID: ");
-            bid = Integer.parseInt(in.readLine());
-            ps.setInt(2, bid);
+            // get data type of primary key
+            String pkColumnType = getColumnType(tableName, primaryKey);
+            // get table columns
+            ArrayList<String> availableColumns = getTableColumns(tableName);
+            // remove the primary key, not allowed to update that field
+            availableColumns.remove(primaryKey);
 
-            System.out.print("\nBranch Name: ");
-            bname = in.readLine();
-            ps.setString(1, bname);
+            int columnNum = availableColumns.size();
+            if (columnNum == 0) {
+                System.out.println("No columns found!");
+                return;
+            }
+            // get user input for which column to update
+            System.out.print("\n\nPlease choose an option: \n");
+            for (int i = 1; i <= columnNum; i++) {
+                System.out.print(i + ".  Update field " + availableColumns.get(i-1) + "\n");
+            }
+            System.out.print(columnNum + 1 + ".  Back\n>> ");
+
+            int choice = Integer.parseInt(in.readLine());
+
+            // Back option
+            if (choice == columnNum + 1) {
+                return;
+            }
+
+            // construct the update sql query
+            String fieldName = availableColumns.get(choice - 1);
+            // get data type of field
+            String fColumnType = getColumnType(tableName, fieldName);
+            PreparedStatement ps = con.prepareStatement("UPDATE " + tableName + " SET " + fieldName + " = ? WHERE " + primaryKey + " = ?");
+
+            System.out.print("\nSET " + fieldName + ": ");
+            if (fColumnType.equals("NUMBER")) {
+                int id = Integer.parseInt(in.readLine());
+                ps.setInt(1, id);
+            } else {
+                String id = in.readLine();
+                ps.setString(1, id);
+            }
+
+            System.out.print("\nWHERE " + primaryKey + ": ");
+            String input = in.readLine();
+            if (pkColumnType.equals("NUMBER")) {
+                ps.setInt(2, Integer.parseInt(input));
+            } else {
+                ps.setString(2, input);
+            }
 
             int rowCount = ps.executeUpdate();
             if (rowCount == 0) {
-                System.out.println("\nBranch " + bid + " does not exist!");
+                System.out.println("\n" + primaryKey + ": " + input + " does not exist!");
             }
             con.commit();
             ps.close();
-        } catch (IOException e) {
+        }catch(IOException e){
             System.out.println("IOException!");
-        } catch (SQLException ex) {
+        }catch(SQLException ex){
             System.out.println("Message: " + ex.getMessage());
 
             try {
@@ -549,7 +574,7 @@ public class Hospital implements ActionListener {
     /*
      * display table rows
      */
-    private void showTable(String tableName) {
+    private void showTableRows(String tableName) {
         try {
             Statement statement = con.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
@@ -573,7 +598,7 @@ public class Hospital implements ActionListener {
 
             // display rows
             while (resultSet.next()) {
-                for (int i = 0; i < availableColumns.size(); i++) {
+                for (int i = 0; i < numCols; i++) {
                     String columnName = availableColumns.get(i);
                     Integer columnSize = columnWidths.get(i);
                     String rowData = resultSet.getString(columnName);
@@ -588,9 +613,36 @@ public class Hospital implements ActionListener {
     }
 
     /*
+     * find the primary key of given table
+     */
+    private String getPrimaryKey(String tableName) {
+        String primaryKey = "";
+        try {
+            DatabaseMetaData dbMetaData = con.getMetaData();
+            ResultSet resultSet = dbMetaData.getPrimaryKeys(null, null, tableName);
+            ArrayList<String> primaryKeys = new ArrayList<String>();
+            while (resultSet.next()) {
+                primaryKeys.add(resultSet.getString("COLUMN_NAME"));
+            }
+            if (primaryKeys.size() > 0) {
+                primaryKey = primaryKeys.get(0);
+            }
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+            try {
+                con.rollback();
+            } catch (SQLException ex2) {
+                System.out.println("Message: " + ex2.getMessage());
+                System.exit(-1);
+            }
+        }
+        return primaryKey;
+    }
+
+    /*
      * find the data type for this column
      */
-    private String findType(String tableName, String columnName) {
+    private String getColumnType(String tableName, String columnName) {
         String columnType = "";
         try {
             int index = 0;
@@ -606,7 +658,6 @@ public class Hospital implements ActionListener {
             columnType = rsMetaData.getColumnTypeName(index);
         } catch (SQLException ex) {
             System.out.println("Message: " + ex.getMessage());
-
             try {
                 con.rollback();
             } catch (SQLException ex2) {
@@ -615,6 +666,32 @@ public class Hospital implements ActionListener {
             }
         }
         return columnType;
+    }
+
+    private ArrayList<String> getTableColumns(String tableName) {
+        ArrayList<String> availableColumns = new ArrayList<String>();
+        try {
+            Statement statement = con.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
+            ResultSetMetaData rsMetaData = resultSet.getMetaData();
+
+            // get number of columns
+            int numCols = rsMetaData.getColumnCount();
+
+            // get column names
+            for (int i = 1; i <= numCols; i++) {
+                availableColumns.add(rsMetaData.getColumnName(i));
+            }
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+            try {
+                con.rollback();
+            } catch (SQLException ex2) {
+                System.out.println("Message: " + ex2.getMessage());
+                System.exit(-1);
+            }
+        }
+        return availableColumns;
     }
 
     public static void main(String args[]) {
