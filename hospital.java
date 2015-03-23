@@ -12,9 +12,9 @@ import java.awt.event.*;
 
 /*
  * This class implements a graphical login window and a simple text
- * interface for interacting with the branch table 
+ * interface for interacting with the hospital table
  */
-public class branch implements ActionListener {
+public class hospital implements ActionListener {
     // command line reader 
     private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
@@ -32,7 +32,7 @@ public class branch implements ActionListener {
     /*
      * constructs login window and loads JDBC driver
      */
-    public branch() {
+    public hospital() {
         mainFrame = new JFrame("User Login");
 
         JLabel usernameLabel = new JLabel("Enter username: ");
@@ -179,10 +179,11 @@ public class branch implements ActionListener {
 
             while (!quit) {
                 System.out.print("\n\nPlease choose one of the following: \n");
-                System.out.print("1.  Insert branch\n");
-                System.out.print("2.  Delete branch\n");
-                System.out.print("3.  Update branch\n");
-                System.out.print("4.  Show branch\n");
+                System.out.print("0.  Create table\n");
+                System.out.print("1.  Insert patient\n");
+                System.out.print("2.  Delete patient\n");
+                System.out.print("3.  Update patient\n");
+                System.out.print("4.  Show patient\n");
                 System.out.print("5.  Quit\n>> ");
 
                 choice = Integer.parseInt(in.readLine());
@@ -190,17 +191,20 @@ public class branch implements ActionListener {
                 System.out.println(" ");
 
                 switch (choice) {
+                    case 0:
+                        createTable();
+                        break;
                     case 1:
-                        insertBranch();
+                        insertPatient();
                         break;
                     case 2:
-                        deleteBranch();
+                        deletePatient();
                         break;
                     case 3:
-                        updateBranch();
+                        updatePatient();
                         break;
                     case 4:
-                        showBranch();
+                        showPatient();
                         break;
                     case 5:
                         quit = true;
@@ -225,11 +229,39 @@ public class branch implements ActionListener {
         }
     }
 
+    /*
+     * creates a table for a hospital entity
+     */
+    private void createTable() {
+        PreparedStatement ps;
+        try {
+            System.out.print("\nCreate table sql: ");
+            String sql = in.readLine();
+            ps = con.prepareCall(sql);
+            ps.executeUpdate();
+
+            // commit work
+            con.commit();
+
+            ps.close();
+        } catch (IOException e) {
+            System.out.println("IOException!");
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+            try {
+                // undo the insert
+                con.rollback();
+            } catch (SQLException ex2) {
+                System.out.println("Message: " + ex2.getMessage());
+                System.exit(-1);
+            }
+        }
+    }
 
     /*
-     * inserts a branch
+     * inserts a hospital
      */
-    private void insertBranch() {
+    private void insertPatient() {
         int bid;
         String bname;
         String baddr;
@@ -238,38 +270,40 @@ public class branch implements ActionListener {
         PreparedStatement ps;
 
         try {
-            ps = con.prepareStatement("INSERT INTO branch VALUES (?,?,?,?,?)");
+//            ps = con.prepareStatement("INSERT INTO hospital VALUES (?,?,?,?,?)");
 
-            System.out.print("\nBranch ID: ");
-            bid = Integer.parseInt(in.readLine());
-            ps.setInt(1, bid);
-
-            System.out.print("\nBranch Name: ");
-            bname = in.readLine();
-            ps.setString(2, bname);
-
-            System.out.print("\nBranch Address: ");
-            baddr = in.readLine();
-
-            if (baddr.length() == 0) {
-                ps.setString(3, null);
-            } else {
-                ps.setString(3, baddr);
-            }
-
-            System.out.print("\nBranch City: ");
-            bcity = in.readLine();
-            ps.setString(4, bcity);
-
-            System.out.print("\nBranch Phone: ");
-            String phoneTemp = in.readLine();
-            if (phoneTemp.length() == 0) {
-                ps.setNull(5, java.sql.Types.INTEGER);
-            } else {
-                bphone = Integer.parseInt(phoneTemp);
-                ps.setInt(5, bphone);
-            }
-
+//            System.out.print("\nBranch ID: ");
+//            bid = Integer.parseInt(in.readLine());
+//            ps.setInt(1, bid);
+//
+//            System.out.print("\nBranch Name: ");
+//            bname = in.readLine();
+//            ps.setString(2, bname);
+//
+//            System.out.print("\nBranch Address: ");
+//            baddr = in.readLine();
+//
+//            if (baddr.length() == 0) {
+//                ps.setString(3, null);
+//            } else {
+//                ps.setString(3, baddr);
+//            }
+//
+//            System.out.print("\nBranch City: ");
+//            bcity = in.readLine();
+//            ps.setString(4, bcity);
+//
+//            System.out.print("\nBranch Phone: ");
+//            String phoneTemp = in.readLine();
+//            if (phoneTemp.length() == 0) {
+//                ps.setNull(5, java.sql.Types.INTEGER);
+//            } else {
+//                bphone = Integer.parseInt(phoneTemp);
+//                ps.setInt(5, bphone);
+//            }
+            System.out.print("\nInsert Patient sql: ");
+            String sql = in.readLine();
+            ps = con.prepareCall(sql);
             ps.executeUpdate();
 
             // commit work
@@ -292,14 +326,14 @@ public class branch implements ActionListener {
 
 
     /*
-     * deletes a branch
+     * deletes a hospital
      */
-    private void deleteBranch() {
+    private void deletePatient() {
         int bid;
         PreparedStatement ps;
 
         try {
-            ps = con.prepareStatement("DELETE FROM branch WHERE branch_id = ?");
+            ps = con.prepareStatement("DELETE FROM hospital WHERE branch_id = ?");
 
             System.out.print("\nBranch ID: ");
             bid = Integer.parseInt(in.readLine());
@@ -330,15 +364,15 @@ public class branch implements ActionListener {
 
 
     /*
-     * updates the name of a branch
+     * updates the name of a hospital
      */
-    private void updateBranch() {
+    private void updatePatient() {
         int bid;
         String bname;
         PreparedStatement ps;
 
         try {
-            ps = con.prepareStatement("UPDATE branch SET branch_name = ? WHERE branch_id = ?");
+            ps = con.prepareStatement("UPDATE hospital SET branch_name = ? WHERE branch_id = ?");
 
             System.out.print("\nBranch ID: ");
             bid = Integer.parseInt(in.readLine());
@@ -374,7 +408,7 @@ public class branch implements ActionListener {
     /*
      * display information about branches
      */
-    private void showBranch() {
+    private void showPatient() {
         String bid;
         String bname;
         String baddr;
@@ -386,7 +420,7 @@ public class branch implements ActionListener {
         try {
             stmt = con.createStatement();
 
-            rs = stmt.executeQuery("SELECT * FROM branch");
+            rs = stmt.executeQuery("SELECT * FROM patients");
 
             // get info on ResultSet
             ResultSetMetaData rsmd = rs.getMetaData();
@@ -445,7 +479,7 @@ public class branch implements ActionListener {
 
 
     public static void main(String args[]) {
-        branch b = new branch();
+        hospital b = new hospital();
     }
 }
 
