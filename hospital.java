@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * This class implements a graphical login window and a simple text
  * interface for interacting with the Hospital table
  */
-public class Hospital implements ActionListener {
+public class hospital implements ActionListener {
     // command line reader 
     private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     private Connection con;
@@ -26,8 +26,23 @@ public class Hospital implements ActionListener {
     /*
      * constructs login window and loads JDBC driver
      */
-    public Hospital() {
-        mainFrame = new JFrame("User Login");
+    public hospital() {
+        oracleLogin();
+
+        try {
+            // Load the Oracle JDBC driver
+            DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+            System.exit(-1);
+        }
+    }
+
+	/**
+	 * Run GUI for oracle login.
+	 */
+	private void oracleLogin() {
+		mainFrame = new JFrame("User Login");
 
         JLabel usernameLabel = new JLabel("Enter username: ");
         JLabel passwordLabel = new JLabel("Enter password: ");
@@ -103,15 +118,7 @@ public class Hospital implements ActionListener {
 
         // place the cursor in the text field for the username
         usernameField.requestFocus();
-
-        try {
-            // Load the Oracle JDBC driver
-            DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
-        } catch (SQLException ex) {
-            System.out.println("Message: " + ex.getMessage());
-            System.exit(-1);
-        }
-    }
+	}
 
     /*
      * connects to Oracle database named ug using user supplied username and password
