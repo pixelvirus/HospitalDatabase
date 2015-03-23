@@ -459,42 +459,43 @@ public class Hospital implements ActionListener {
     }
 
     /*
-     * deletes a Hospital
+     * deletes a record from a table
      */
     private void deleteFromTable(String tableName) {
         try {
-            Statement statement = con.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
-            ResultSetMetaData metaData = resultSet.getMetaData();
-
+            // find primary keys of table
             DatabaseMetaData dbMetaData = con.getMetaData();
-            ResultSet primaryKeys = dbMetaData.getPrimaryKeys(null, null, tableName);
-
-            while(primaryKeys.next()){
-                System.out.println("test");
-                System.out.println(primaryKeys.getString("COLUMN_NAME"));
+            ResultSet resultSet = dbMetaData.getPrimaryKeys(null, null, tableName.toUpperCase());
+            ArrayList<String> primaryKeys = new ArrayList<String>();
+            while (resultSet.next()){
+                primaryKeys.add(resultSet.getString("COLUMN_NAME"));
             }
 
-//            ps = con.prepareStatement("DELETE FROM Hospital WHERE branch_id = ?");
-//
-//            System.out.print("\nBranch ID: ");
-//            bid = Integer.parseInt(in.readLine());
-//            ps.setInt(1, bid);
-//
-//            int rowCount = ps.executeUpdate();
-//
-//            if (rowCount == 0) {
-//                System.out.println("\nBranch " + bid + " does not exist!");
-//            }
-//
-//            con.commit();
-//
-//            ps.close();
-//        } catch (IOException e) {
-//            System.out.println("IOException!");
+            // check that we found a primary key
+            if (primaryKeys.size() == 0) {
+                System.out.println("No primary key found!");
+                return;
+            }
+
+            // get value for primary key and run delete sql
+            String primaryKey = primaryKeys.get(0);
+            PreparedStatement ps = con.prepareStatement("DELETE FROM " + tableName + " WHERE " + primaryKey + " = ?");
+            System.out.print("\n" + primaryKey + ": ");
+            String id = in.readLine();
+            ps.setString(1, id);
+
+            // update row count
+            int rowCount = ps.executeUpdate();
+            if (rowCount == 0) {
+                System.out.println("\n" + primaryKey + " does not exist!");
+            }
+
+            con.commit();
+            ps.close();
+        } catch (IOException e) {
+            System.out.println("IOException!");
         } catch (SQLException ex) {
             System.out.println("Message: " + ex.getMessage());
-
             try {
                 con.rollback();
             } catch (SQLException ex2) {
