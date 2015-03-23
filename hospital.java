@@ -491,7 +491,7 @@ public class Hospital implements ActionListener {
     }
 
     /*
-     * update the field of a table
+     * update a value of a given table and field
      */
     private void updateTableValue(String tableName) {
         try {
@@ -572,7 +572,7 @@ public class Hospital implements ActionListener {
     }
 
     /*
-     * display table rows
+     * display all table data with column width automatically sized to match
      */
     private void showTableRows(String tableName) {
         try {
@@ -668,6 +668,9 @@ public class Hospital implements ActionListener {
         return columnType;
     }
 
+    /*
+     * find the available columns for given table
+     */
     private ArrayList<String> getTableColumns(String tableName) {
         ArrayList<String> availableColumns = new ArrayList<String>();
         try {
