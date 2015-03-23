@@ -1,14 +1,11 @@
 // We need to import the java.sql package to use JDBC
 import java.sql.*;
-
 // for reading from the command line
 import java.io.*;
-
 // for the login window
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-
 
 /*
  * This class implements a graphical login window and a simple text
@@ -28,7 +25,6 @@ public class hospital implements ActionListener {
     private JPasswordField passwordField;
     private JFrame mainFrame;
 
-
     /*
      * constructs login window and loads JDBC driver
      */
@@ -47,9 +43,7 @@ public class hospital implements ActionListener {
         JPanel contentPane = new JPanel();
         mainFrame.setContentPane(contentPane);
 
-
         // layout components using the GridBag layout manager
-
         GridBagLayout gb = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
 
@@ -121,7 +115,6 @@ public class hospital implements ActionListener {
         }
     }
 
-
     /*
      * connects to Oracle database named ug using user supplied username and password
      */
@@ -138,7 +131,6 @@ public class hospital implements ActionListener {
             return false;
         }
     }
-
 
     /*
      * event handler for login window
@@ -160,9 +152,7 @@ public class hospital implements ActionListener {
                 passwordField.setText("");
             }
         }
-
     }
-
 
     /*
      * displays simple text interface
@@ -170,7 +160,6 @@ public class hospital implements ActionListener {
     private void showMenu() {
         int choice;
         boolean quit;
-
         quit = false;
 
         try {
@@ -179,45 +168,30 @@ public class hospital implements ActionListener {
 
             while (!quit) {
                 System.out.print("\n\nPlease choose one of the following: \n");
-                System.out.print("0.  Create table\n");
-                System.out.print("1.  Insert patient\n");
-                System.out.print("2.  Delete patient\n");
-                System.out.print("3.  Update patient\n");
-                System.out.print("4.  Show patient\n");
-                System.out.print("5.  Quit\n>> ");
+                System.out.print("1.  Run sql directly (create table)\n");
+                System.out.print("2.  Modify or view an existing table\n");
+                System.out.print("3.  Quit\n>> ");
 
                 choice = Integer.parseInt(in.readLine());
-
                 System.out.println(" ");
 
                 switch (choice) {
-                    case 0:
-                        createTable();
-                        break;
                     case 1:
-                        insertPatient();
+                        runSql();
                         break;
                     case 2:
-                        deletePatient();
+                        chooseTable();
                         break;
                     case 3:
-                        updatePatient();
-                        break;
-                    case 4:
-                        showPatient();
-                        break;
-                    case 5:
                         quit = true;
                 }
             }
-
             con.close();
             in.close();
             System.out.println("\nGood Bye!\n\n");
             System.exit(0);
         } catch (IOException e) {
             System.out.println("IOException!");
-
             try {
                 con.close();
                 System.exit(-1);
@@ -230,19 +204,17 @@ public class hospital implements ActionListener {
     }
 
     /*
-     * creates a table for a hospital entity
+     * run sql directly
      */
-    private void createTable() {
+    private void runSql() {
         PreparedStatement ps;
         try {
-            System.out.print("\nCreate table sql: ");
+            System.out.print("\nEnter sql: ");
             String sql = in.readLine();
             ps = con.prepareCall(sql);
             ps.executeUpdate();
-
             // commit work
             con.commit();
-
             ps.close();
         } catch (IOException e) {
             System.out.println("IOException!");
@@ -259,9 +231,179 @@ public class hospital implements ActionListener {
     }
 
     /*
+     * choose a table to modify
+     */
+    private void chooseTable() {
+        int choice;
+        boolean quit = false;
+
+        try {
+            // disable auto commit mode
+            con.setAutoCommit(false);
+
+            while (!quit) {
+                System.out.print("\n\nPlease choose a table to modify: \n");
+                System.out.print("1.  Patients\n");
+                System.out.print("2.  Doctors\n");
+                System.out.print("3.  Bookings\n");
+                System.out.print("4.  OperatingRooms\n");
+                System.out.print("5.  BookingReservesOperatingRooms\n");
+                System.out.print("6.  RecoveryRooms\n");
+                System.out.print("7.  RecoveryRoomBeds\n");
+                System.out.print("8.  BookingReservesRecoveryRooms\n");
+                System.out.print("9.  Procedures\n");
+                System.out.print("10.  BookingForProcedures\n");
+                System.out.print("11.  AdmittedTo\n");
+                System.out.print("12.  Medications\n");
+                System.out.print("13.  Prescribes\n");
+                System.out.print("14.  Performs\n");
+                System.out.print("15.  Offices\n");
+                System.out.print("16.  HasAOffice\n");
+                System.out.print("17.  StaffUsers\n");
+                System.out.print("18.  PatientUsers\n");
+                System.out.print("19.  SUserHasA\n");
+                System.out.print("20.  PUserHasA\n");
+                System.out.print("21.  Back\n>> ");
+
+                choice = Integer.parseInt(in.readLine());
+                System.out.println(" ");
+
+                switch (choice) {
+                    case 1:
+                        modifyTable("Patients");
+                        break;
+                    case 2:
+                        modifyTable("Doctors");
+                        break;
+                    case 3:
+                        modifyTable("Bookings");
+                        break;
+                    case 4:
+                        modifyTable("OperatingRooms");
+                        break;
+                    case 5:
+                        modifyTable("BookingReservesOperatingRooms");
+                        break;
+                    case 6:
+                        modifyTable("RecoveryRooms");
+                        break;
+                    case 7:
+                        modifyTable("RecoveryRoomBeds");
+                        break;
+                    case 8:
+                        modifyTable("BookingReservesRecoveryRooms");
+                        break;
+                    case 9:
+                        modifyTable("Procedures");
+                        break;
+                    case 10:
+                        modifyTable("BookingForProcedures");
+                        break;
+                    case 11:
+                        modifyTable("AdmittedTo");
+                        break;
+                    case 12:
+                        modifyTable("Medications");
+                        break;
+                    case 13:
+                        modifyTable("Prescribes");
+                        break;
+                    case 14:
+                        modifyTable("Performs");
+                        break;
+                    case 15:
+                        modifyTable("Offices");
+                        break;
+                    case 16:
+                        modifyTable("HasAOffice");
+                        break;
+                    case 17:
+                        modifyTable("StaffUsers");
+                        break;
+                    case 18:
+                        modifyTable("PatientUsers");
+                        break;
+                    case 19:
+                        modifyTable("SUserHasA");
+                        break;
+                    case 20:
+                        modifyTable("PUserHasA");
+                        break;
+                    case 21:
+                        quit = true;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("IOException!");
+            try {
+                con.close();
+                System.exit(-1);
+            } catch (SQLException ex) {
+                System.out.println("Message: " + ex.getMessage());
+            }
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }
+    }
+
+    /*
+     * choose table modifications
+     */
+    private void modifyTable(String tableName) {
+        int choice;
+        boolean quit;
+        quit = false;
+
+        try {
+            // disable auto commit mode
+            con.setAutoCommit(false);
+
+            while (!quit) {
+                System.out.print("\n\nPlease choose one of the following: \n");
+                System.out.print("1.  Insert " + tableName + "\n");
+                System.out.print("2.  Delete " + tableName + "\n");
+                System.out.print("3.  Update " + tableName + "\n");
+                System.out.print("4.  Show " + tableName + "\n");
+                System.out.print("5.  Back\n>> ");
+
+                choice = Integer.parseInt(in.readLine());
+                System.out.println(" ");
+
+                switch (choice) {
+                    case 1:
+                        insertTable(tableName);
+                        break;
+                    case 2:
+                        deleteTable();
+                        break;
+                    case 3:
+                        updateTable();
+                        break;
+                    case 4:
+                        showTable();
+                        break;
+                    case 5:
+                        quit = true;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("IOException!");
+
+            try {
+                con.close();
+                System.exit(-1);
+            } catch (SQLException ex) {
+                System.out.println("Message: " + ex.getMessage());
+            }
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }
+    }
+
+    /*
      * inserts a hospital
      */
-    private void insertPatient() {
+    private void insertTable(String tableName) {
         int bid;
         String bname;
         String baddr;
@@ -301,7 +443,7 @@ public class hospital implements ActionListener {
 //                bphone = Integer.parseInt(phoneTemp);
 //                ps.setInt(5, bphone);
 //            }
-            System.out.print("\nInsert Patient sql: ");
+            System.out.print("\nInsert " + tableName + " sql: ");
             String sql = in.readLine();
             ps = con.prepareCall(sql);
             ps.executeUpdate();
@@ -324,11 +466,10 @@ public class hospital implements ActionListener {
         }
     }
 
-
     /*
      * deletes a hospital
      */
-    private void deletePatient() {
+    private void deleteTable() {
         int bid;
         PreparedStatement ps;
 
@@ -362,11 +503,10 @@ public class hospital implements ActionListener {
         }
     }
 
-
     /*
      * updates the name of a hospital
      */
-    private void updatePatient() {
+    private void updateTable() {
         int bid;
         String bname;
         PreparedStatement ps;
@@ -388,7 +528,6 @@ public class hospital implements ActionListener {
             }
 
             con.commit();
-
             ps.close();
         } catch (IOException e) {
             System.out.println("IOException!");
@@ -404,11 +543,10 @@ public class hospital implements ActionListener {
         }
     }
 
-
     /*
      * display information about branches
      */
-    private void showPatient() {
+    private void showTable() {
         String pt_id;
         String pt_name;
         String phone;
@@ -504,7 +642,6 @@ public class hospital implements ActionListener {
             System.out.println("Message: " + ex.getMessage());
         }
     }
-
 
     public static void main(String args[]) {
         hospital b = new hospital();
