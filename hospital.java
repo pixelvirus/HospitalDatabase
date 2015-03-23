@@ -409,11 +409,14 @@ public class hospital implements ActionListener {
      * display information about branches
      */
     private void showPatient() {
-        String bid;
-        String bname;
-        String baddr;
-        String bcity;
-        String bphone;
+        String pt_id;
+        String pt_name;
+        String phone;
+        String address;
+        String city;
+        String province;
+        String zip;
+        String insurance;
         Statement stmt;
         ResultSet rs;
 
@@ -445,27 +448,52 @@ public class hospital implements ActionListener {
 
                 // simplified output formatting; truncation may occur
 
-                bid = rs.getString("branch_id");
-                System.out.printf("%-10.10s", bid);
+                pt_id = rs.getString("pt_id");
+                System.out.printf("%-10.10s", pt_id);
 
-                bname = rs.getString("branch_name");
-                System.out.printf("%-20.20s", bname);
+                pt_name = rs.getString("pt_name");
+                System.out.printf("%-20.20s", pt_name);
 
-                baddr = rs.getString("branch_addr");
-                if (rs.wasNull()) {
-                    System.out.printf("%-20.20s", " ");
-                } else {
-                    System.out.printf("%-20.20s", baddr);
-                }
-
-                bcity = rs.getString("branch_city");
-                System.out.printf("%-15.15s", bcity);
-
-                bphone = rs.getString("branch_phone");
+                phone = rs.getString("phone");
                 if (rs.wasNull()) {
                     System.out.printf("%-15.15s\n", " ");
                 } else {
-                    System.out.printf("%-15.15s\n", bphone);
+                    System.out.printf("%-15.15s\n", phone);
+                }
+
+                address = rs.getString("address");
+                if (rs.wasNull()) {
+                    System.out.printf("%-20.20s", " ");
+                } else {
+                    System.out.printf("%-20.20s", address);
+                }
+
+                city = rs.getString("city");
+                if (rs.wasNull()) {
+                    System.out.printf("%-15.15s", " ");
+                } else {
+                    System.out.printf("%-15.15s", city);
+                }
+
+                province = rs.getString("province");
+                if (rs.wasNull()) {
+                    System.out.printf("%-15.15s", " ");
+                } else {
+                    System.out.printf("%-15.15s", province);
+                }
+
+                zip = rs.getString("zip");
+                if (rs.wasNull()) {
+                    System.out.printf("%-15.15s", " ");
+                } else {
+                    System.out.printf("%-15.15s", zip);
+                }
+
+                insurance = rs.getString("insurance");
+                if (rs.wasNull()) {
+                    System.out.printf("%-15.15s", " ");
+                } else {
+                    System.out.printf("%-15.15s", insurance);
                 }
             }
 
