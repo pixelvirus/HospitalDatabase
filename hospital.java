@@ -15,12 +15,9 @@ import java.util.ArrayList;
 public class Hospital implements ActionListener {
     // command line reader 
     private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-
     private Connection con;
-
     // user is allowed 3 login attempts
     private int loginAttempts = 0;
-
     // components of the login window
     private JTextField usernameField;
     private JPasswordField passwordField;
@@ -121,10 +118,8 @@ public class Hospital implements ActionListener {
      */
     private boolean connect(String username, String password) {
         String connectURL = "jdbc:oracle:thin:@dbhost.ugrad.cs.ubc.ca:1522:ug";
-
         try {
             con = DriverManager.getConnection(connectURL, username, password);
-
             System.out.println("\nConnected to Oracle!");
             return true;
         } catch (SQLException ex) {
@@ -144,7 +139,6 @@ public class Hospital implements ActionListener {
             showMenu();
         } else {
             loginAttempts++;
-
             if (loginAttempts >= 3) {
                 mainFrame.dispose();
                 System.exit(-1);
@@ -220,7 +214,7 @@ public class Hospital implements ActionListener {
         } catch (SQLException ex) {
             System.out.println("Message: " + ex.getMessage());
             try {
-                // undo the insert
+                // undo the action
                 con.rollback();
             } catch (SQLException ex2) {
                 System.out.println("Message: " + ex2.getMessage());
@@ -367,18 +361,19 @@ public class Hospital implements ActionListener {
                 choice = Integer.parseInt(in.readLine());
                 System.out.println(" ");
 
+                String tblUpperCase = tableName.toUpperCase();
                 switch (choice) {
                     case 1:
-                        insertIntoTable(tableName);
+                        insertIntoTable(tblUpperCase);
                         break;
                     case 2:
-                        deleteFromTable(tableName);
+                        deleteFromTable(tblUpperCase);
                         break;
                     case 3:
-                        updateTable(tableName);
+                        updateTable(tblUpperCase);
                         break;
                     case 4:
-                        showTable(tableName);
+                        showTable(tblUpperCase);
                         break;
                     case 5:
                         quit = true;
@@ -386,7 +381,6 @@ public class Hospital implements ActionListener {
             }
         } catch (IOException e) {
             System.out.println("IOException!");
-
             try {
                 con.close();
                 System.exit(-1);
@@ -399,12 +393,37 @@ public class Hospital implements ActionListener {
     }
 
     /*
-     * inserts a Hospital
+     * insert a record into a table
      */
     private void insertIntoTable(String tableName) {
         try {
-            PreparedStatement ps;
-//            ps = con.prepareStatement("INSERT INTO Hospital VALUES (?,?,?,?,?)");
+            Statement statement = con.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
+            ResultSetMetaData rsMetaData = resultSet.getMetaData();
+
+            // get number of columns
+            int numCols = rsMetaData.getColumnCount();
+            ArrayList<String> availableColumns = new ArrayList<String>();
+
+            // get column names
+            for (int i = 1; i <= numCols; i++) {
+                availableColumns.add(rsMetaData.getColumnName(i));
+            }
+
+            // construct the insert sql statement
+            String ps = "INSERT INTO " + tableName + " VALUES (";
+            while (resultSet.next()) {
+                for (int i = 0; i < availableColumns.size(); i++) {
+                    String columnName = availableColumns.get(i);
+
+                    System.out.print("\n" + columnName + ": ");
+                    String column = in.readLine();
+//                    ps.setInt(1, bid);
+
+                    String rowData = resultSet.getString(columnName);
+                }
+            }
+            PreparedStatement preparedStatement = con.prepareStatement(ps);
 
 //            System.out.print("\nBranch ID: ");
 //            bid = Integer.parseInt(in.readLine());
@@ -435,15 +454,9 @@ public class Hospital implements ActionListener {
 //                bphone = Integer.parseInt(phoneTemp);
 //                ps.setInt(5, bphone);
 //            }
-            System.out.print("\nInsert " + tableName + " sql: ");
-            String sql = in.readLine();
-            ps = con.prepareCall(sql);
-            ps.executeUpdate();
-
-            // commit work
+            preparedStatement.executeUpdate();
             con.commit();
-
-            ps.close();
+            preparedStatement.close();
         } catch (IOException e) {
             System.out.println("IOException!");
         } catch (SQLException ex) {
@@ -459,15 +472,15 @@ public class Hospital implements ActionListener {
     }
 
     /*
-     * deletes a record from a table
+     * delete a record from a table
      */
     private void deleteFromTable(String tableName) {
         try {
             // find primary keys of table
             DatabaseMetaData dbMetaData = con.getMetaData();
-            ResultSet resultSet = dbMetaData.getPrimaryKeys(null, null, tableName.toUpperCase());
+            ResultSet resultSet = dbMetaData.getPrimaryKeys(null, null, tableName);
             ArrayList<String> primaryKeys = new ArrayList<String>();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 primaryKeys.add(resultSet.getString("COLUMN_NAME"));
             }
 
@@ -479,10 +492,31 @@ public class Hospital implements ActionListener {
 
             // get value for primary key and run delete sql
             String primaryKey = primaryKeys.get(0);
+
+            // check the type of primary key
+            int index = 0;
+            boolean changed = false;
+            Statement statement = con.createStatement();
+            ResultSetMetaData rsMetaData = statement.executeQuery("SELECT * FROM " + tableName).getMetaData();
+            int columnCount = rsMetaData.getColumnCount();
+            for (int i = 1; i <= columnCount; i++) {
+                if (rsMetaData.getColumnName(i).equals(primaryKey)) {
+                    changed = true;
+                    index = i;
+                    break;
+                }
+            }
+
+            // get value of primary key
             PreparedStatement ps = con.prepareStatement("DELETE FROM " + tableName + " WHERE " + primaryKey + " = ?");
             System.out.print("\n" + primaryKey + ": ");
-            String id = in.readLine();
-            ps.setString(1, id);
+            if (changed && rsMetaData.getColumnTypeName(index).equals("NUMBER")) {
+                int id = Integer.parseInt(in.readLine());
+                ps.setInt(1, id);
+            } else {
+                String id = in.readLine();
+                ps.setString(1, id);
+            }
 
             // update row count
             int rowCount = ps.executeUpdate();
@@ -506,7 +540,7 @@ public class Hospital implements ActionListener {
     }
 
     /*
-     * updates the name of a Hospital
+     * update the field of a table
      */
     private void updateTable(String tableName) {
         int bid;
@@ -528,7 +562,6 @@ public class Hospital implements ActionListener {
             if (rowCount == 0) {
                 System.out.println("\nBranch " + bid + " does not exist!");
             }
-
             con.commit();
             ps.close();
         } catch (IOException e) {
@@ -570,6 +603,7 @@ public class Hospital implements ActionListener {
             }
             System.out.println("\n");
 
+            // display rows
             while (resultSet.next()) {
                 for (int i = 0; i < availableColumns.size(); i++) {
                     String columnName = availableColumns.get(i);
