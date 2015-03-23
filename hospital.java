@@ -168,8 +168,8 @@ public class hospital implements ActionListener {
             con.setAutoCommit(false);
 
             while (!quit) {
-                System.out.print("\n\nPlease choose one of the following: \n");
-                System.out.print("1.  Run sql directly (create table)\n");
+                System.out.print("\n\nPlease choose an option: \n");
+                System.out.print("1.  Run sql directly (e.g. create or drop table)\n");
                 System.out.print("2.  Modify or view an existing table\n");
                 System.out.print("3.  Quit\n>> ");
 
@@ -243,7 +243,7 @@ public class hospital implements ActionListener {
             con.setAutoCommit(false);
 
             while (!quit) {
-                System.out.print("\n\nPlease choose a table to modify: \n");
+                System.out.print("\n\nPlease choose a table: \n");
                 System.out.print("1.  Patients\n");
                 System.out.print("2.  Doctors\n");
                 System.out.print("3.  Bookings\n");
@@ -360,12 +360,11 @@ public class hospital implements ActionListener {
             con.setAutoCommit(false);
 
             while (!quit) {
-                System.out.print("\n\nPlease choose one of the following: \n");
+                System.out.print("\n\nPlease choose an option: \n");
                 System.out.print("1.  Insert " + tableName + "\n");
                 System.out.print("2.  Delete " + tableName + "\n");
                 System.out.print("3.  Update " + tableName + "\n");
                 System.out.print("4.  Show " + tableName + "\n");
-                System.out.print("5.  Test get column names");
                 System.out.print("6.  Back\n>> ");
 
                 choice = Integer.parseInt(in.readLine());
@@ -383,9 +382,6 @@ public class hospital implements ActionListener {
                         break;
                     case 4:
                         showTable(tableName);
-                        break;
-                    case 5:
-                        testGetColumns(tableName);
                         break;
                     case 6:
                         quit = true;
@@ -540,29 +536,6 @@ public class hospital implements ActionListener {
             System.out.println("Message: " + ex.getMessage());
 
             try {
-                con.rollback();
-            } catch (SQLException ex2) {
-                System.out.println("Message: " + ex2.getMessage());
-                System.exit(-1);
-            }
-        }
-    }
-
-    /*
-     * test
-     */
-    private void testGetColumns(String tableName) {
-        PreparedStatement ps;
-        try {
-            ps = con.prepareCall("SELECT table_name, column_name, data_type, data_length FROM USER_TAB_COLUMNS WHERE table_name = '" + tableName + "'");
-            ps.executeUpdate();
-            // commit work
-            con.commit();
-            ps.close();
-        } catch (SQLException ex) {
-            System.out.println("Message: " + ex.getMessage());
-            try {
-                // undo the insert
                 con.rollback();
             } catch (SQLException ex2) {
                 System.out.println("Message: " + ex2.getMessage());
