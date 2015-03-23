@@ -153,7 +153,7 @@ public class Hospital implements ActionListener {
      * displays simple text interface
      */
     private void showMenu() {
-        int choice;
+        int choice = 0;
         boolean quit = false;
 
         try {
@@ -166,8 +166,15 @@ public class Hospital implements ActionListener {
                 System.out.print("2.  Modify or view an existing table\n");
                 System.out.print("3.  Quit\n>> ");
 
-                choice = Integer.parseInt(in.readLine());
-                System.out.println(" ");
+                boolean cond = true;
+                while (cond) {
+                    try {
+                        choice = Integer.parseInt(in.readLine());
+                        cond = false;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Your input must contain numbers only! Try again: ");
+                    }
+                }
 
                 switch (choice) {
                     case 1:
@@ -258,7 +265,13 @@ public class Hospital implements ActionListener {
                 System.out.print("20.  PUserHasA\n");
                 System.out.print("21.  Back\n>> ");
 
-                choice = Integer.parseInt(in.readLine());
+                try {
+                    choice = Integer.parseInt(in.readLine());
+                } catch (NumberFormatException e) {
+                    System.out.println("Your input must contain numbers only! Try again: ");
+                    return;
+                }
+
                 System.out.println(" ");
 
                 switch (choice) {
@@ -343,7 +356,7 @@ public class Hospital implements ActionListener {
      * choose table modifications
      */
     private void modifyTable(String tableName) {
-        int choice;
+        int choice = 0;
         boolean quit = false;
 
         try {
@@ -358,8 +371,15 @@ public class Hospital implements ActionListener {
                 System.out.print("4.  Show " + tableName + "\n");
                 System.out.print("5.  Back\n>> ");
 
-                choice = Integer.parseInt(in.readLine());
-                System.out.println(" ");
+                boolean cond = true;
+                while (cond) {
+                    try {
+                        choice = Integer.parseInt(in.readLine());
+                        cond = false;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Your input must contain numbers only! Try again: ");
+                    }
+                }
 
                 String tblUpperCase = tableName.toUpperCase();
                 switch (choice) {
@@ -419,8 +439,16 @@ public class Hospital implements ActionListener {
 
                 System.out.print("\n" + columnName + ": ");
                 if (columnType.equals("NUMBER")) {
-                    int value = Integer.parseInt(in.readLine());
-                    preparedStatement.setInt(i, value);
+                    boolean cond = true;
+                    while (cond) {
+                        try {
+                            int value = Integer.parseInt(in.readLine());
+                            preparedStatement.setInt(i, value);
+                            cond = false;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Your input must contain numbers only! Try again: ");
+                        }
+                    }
                 } else {
                     String value = in.readLine();
                     preparedStatement.setString(i, value);
@@ -429,6 +457,7 @@ public class Hospital implements ActionListener {
             preparedStatement.executeUpdate();
             con.commit();
             preparedStatement.close();
+            System.out.println("\nInsert successful!");
         } catch (IOException e) {
             System.out.println("IOException!");
         } catch (SQLException ex) {
@@ -462,9 +491,18 @@ public class Hospital implements ActionListener {
             // get value of primary key
             PreparedStatement ps = con.prepareStatement("DELETE FROM " + tableName + " WHERE " + primaryKey + " = ?");
             System.out.print("\n" + primaryKey + ": ");
+
             if (columnType.equals("NUMBER")) {
-                int id = Integer.parseInt(in.readLine());
-                ps.setInt(1, id);
+                boolean cond = true;
+                while (cond) {
+                    try {
+                        int id = Integer.parseInt(in.readLine());
+                        ps.setInt(1, id);
+                        cond = false;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Your input must contain numbers only! Try again: ");
+                    }
+                }
             } else {
                 String id = in.readLine();
                 ps.setString(1, id);
@@ -477,6 +515,7 @@ public class Hospital implements ActionListener {
             }
             con.commit();
             ps.close();
+            System.out.println("\nDelete successful!");
         } catch (IOException e) {
             System.out.println("IOException!");
         } catch (SQLException ex) {
@@ -521,7 +560,16 @@ public class Hospital implements ActionListener {
             }
             System.out.print(columnNum + 1 + ".  Back\n>> ");
 
-            int choice = Integer.parseInt(in.readLine());
+            int choice = 0;
+            boolean cond = true;
+            while (cond) {
+                try {
+                    choice = Integer.parseInt(in.readLine());
+                    cond = false;
+                } catch (NumberFormatException e) {
+                    System.out.println("Your input must contain numbers only! Try again: ");
+                }
+            }
 
             // Back option
             if (choice == columnNum + 1) {
@@ -536,27 +584,42 @@ public class Hospital implements ActionListener {
 
             System.out.print("\nSET " + fieldName + ": ");
             if (fColumnType.equals("NUMBER")) {
-                int id = Integer.parseInt(in.readLine());
-                ps.setInt(1, id);
+                cond = true;
+                while (cond) {
+                    try {
+                        int id = Integer.parseInt(in.readLine());
+                        ps.setInt(1, id);
+                        cond = false;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Your input must contain numbers only! Try again: ");
+                    }
+                }
             } else {
-                String id = in.readLine();
-                ps.setString(1, id);
+                ps.setString(1, in.readLine());
             }
 
             System.out.print("\nWHERE " + primaryKey + ": ");
-            String input = in.readLine();
             if (pkColumnType.equals("NUMBER")) {
-                ps.setInt(2, Integer.parseInt(input));
+                cond = true;
+                while (cond) {
+                    try {
+                        ps.setInt(2, Integer.parseInt(in.readLine()));
+                        cond = false;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Your input must contain numbers only! Try again: ");
+                    }
+                }
             } else {
-                ps.setString(2, input);
+                ps.setString(2, in.readLine());
             }
 
             int rowCount = ps.executeUpdate();
             if (rowCount == 0) {
-                System.out.println("\n" + primaryKey + ": " + input + " does not exist!");
+                System.out.println("\nRow does not exist!");
             }
             con.commit();
             ps.close();
+            System.out.println("\nUpdate successful!");
         }catch(IOException e){
             System.out.println("IOException!");
         }catch(SQLException ex){
