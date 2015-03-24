@@ -10,9 +10,9 @@ import java.util.ArrayList;
 
 /*
  * This class implements a graphical login window and a simple text
- * interface for interacting with the Hospital table
+ * interface for interacting with the HospitalDatabase table
  */
-public class Hospital implements ActionListener {
+public class HospitalDatabase implements ActionListener {
     // command line reader 
     private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     private Connection con;
@@ -26,7 +26,7 @@ public class Hospital implements ActionListener {
     /*
      * constructs login window and loads JDBC driver
      */
-    public Hospital() {
+    public HospitalDatabase() {
         oracleLogin();
 
         try {
@@ -819,7 +819,7 @@ public class Hospital implements ActionListener {
     }
 
     public static void main(String args[]) {
-        Hospital hospital = new Hospital();
+        HospitalDatabase hospitalDatabase = new HospitalDatabase();
     }
 }
 

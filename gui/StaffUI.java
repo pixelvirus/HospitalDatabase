@@ -39,7 +39,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 /**
- * Simple GUI for the Hospital Staff View
+ * Simple GUI for the HospitalDatabase Staff View
  * @author devinli
  *
  */
@@ -70,7 +70,7 @@ public class StaffUI extends JFrame {
 	 */
 
 	public StaffUI() {
-		super("Hospital Staff View");
+		super("HospitalDatabase Staff View");
 		initGUI();
 	}
 	private void initGUI() {
