@@ -179,7 +179,7 @@ public class Hospital implements ActionListener {
                         choice = Integer.parseInt(in.readLine());
                         cond = false;
                     } catch (NumberFormatException e) {
-                        System.out.println("Your input must contain numbers only! Try again: ");
+                        System.out.println("Your input must contain valid integers only! Try again: ");
                     }
                 }
 
@@ -275,7 +275,7 @@ public class Hospital implements ActionListener {
                 try {
                     choice = Integer.parseInt(in.readLine());
                 } catch (NumberFormatException e) {
-                    System.out.println("Your input must contain numbers only! Try again: ");
+                    System.out.println("Your input must contain valid integers only! Try again: ");
                     return;
                 }
 
@@ -384,7 +384,7 @@ public class Hospital implements ActionListener {
                         choice = Integer.parseInt(in.readLine());
                         cond = false;
                     } catch (NumberFormatException e) {
-                        System.out.println("Your input must contain numbers only! Try again: ");
+                        System.out.println("Your input must contain valid integers only! Try again: ");
                     }
                 }
 
@@ -453,7 +453,7 @@ public class Hospital implements ActionListener {
                             preparedStatement.setInt(i, value);
                             cond = false;
                         } catch (NumberFormatException e) {
-                            System.out.println("Your input must contain numbers only! Try again: ");
+                            System.out.println("Your input must contain valid integers only! Try again: ");
                         }
                     }
                 } else {
@@ -507,7 +507,7 @@ public class Hospital implements ActionListener {
                         ps.setInt(1, id);
                         cond = false;
                     } catch (NumberFormatException e) {
-                        System.out.println("Your input must contain numbers only! Try again: ");
+                        System.out.println("Your input must contain valid integers only! Try again: ");
                     }
                 }
             } else {
@@ -522,7 +522,9 @@ public class Hospital implements ActionListener {
             }
             con.commit();
             ps.close();
-            System.out.println("\nDelete successful!");
+            if (rowCount > 0) {
+                System.out.println("\nDelete successful!");
+            }
         } catch (IOException e) {
             System.out.println("IOException!");
         } catch (SQLException ex) {
@@ -578,7 +580,7 @@ public class Hospital implements ActionListener {
                         System.out.println("Please enter an available option!");
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("Your input must contain numbers only! Try again: ");
+                    System.out.println("Your input must contain valid integers only! Try again: ");
                 }
             }
             // Back option
@@ -601,7 +603,7 @@ public class Hospital implements ActionListener {
                         ps.setInt(1, id);
                         cond = false;
                     } catch (NumberFormatException e) {
-                        System.out.println("Your input must contain numbers only! Try again: ");
+                        System.out.println("Your input must contain valid integers only! Try again: ");
                     }
                 }
             } else {
@@ -616,7 +618,7 @@ public class Hospital implements ActionListener {
                         ps.setInt(2, Integer.parseInt(in.readLine()));
                         cond = false;
                     } catch (NumberFormatException e) {
-                        System.out.println("Your input must contain numbers only! Try again: ");
+                        System.out.println("Your input must contain valid integers only! Try again: ");
                     }
                 }
             } else {
@@ -629,7 +631,9 @@ public class Hospital implements ActionListener {
             }
             con.commit();
             ps.close();
-            System.out.println("\nUpdate successful!");
+            if (rowCount > 0) {
+                System.out.println("\nUpdate successful!");
+            }
         }catch(IOException e){
             System.out.println("IOException!");
         }catch(SQLException ex){
@@ -665,7 +669,7 @@ public class Hospital implements ActionListener {
                         System.out.println("Please enter an available option!");
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("Your input must contain numbers only! Try again: ");
+                    System.out.println("Your input must contain valid integers only! Try again: ");
                 }
             }
             // Back option
