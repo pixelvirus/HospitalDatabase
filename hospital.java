@@ -572,10 +572,10 @@ public class Hospital implements ActionListener {
             while (cond) {
                 try {
                     choice = Integer.parseInt(in.readLine());
-                    if (choice > 0 && choice <= columnNum + 1) {
+                    if (choice >= 1 && choice <= columnNum + 1) {
                         cond = false;
                     } else {
-                        System.out.println("Please enter an available value!");
+                        System.out.println("Please enter an available option!");
                     }
                 } catch (NumberFormatException e) {
                     System.out.println("Your input must contain numbers only! Try again: ");
@@ -650,14 +650,49 @@ public class Hospital implements ActionListener {
     private void showTableData(String tableName) {
         try {
             System.out.print("\n\nPlease choose an option: \n");
-            System.out.print("1.  Projection\n");
-            System.out.print("2.  Selection\n");
-            System.out.print("3.  View entire table\n");
+            System.out.print("1.  Enter Projection and/or Selection criteria\n");
+            System.out.print("2.  View entire table\n");
+            System.out.print("3.  Back\n>> ");
 
-            //todo
+            int choice = 0;
+            boolean cond = true;
+            while (cond) {
+                try {
+                    choice = Integer.parseInt(in.readLine());
+                    if (choice >= 1 && choice <= 3) {
+                        cond = false;
+                    } else {
+                        System.out.println("Please enter an available option!");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Your input must contain numbers only! Try again: ");
+                }
+            }
+            // Back option
+            if (choice == 3) {
+                return;
+            }
 
+            // default query for returning all table data
+            String query = "SELECT * FROM " + tableName;
+            // get user input for projection and selection
+            if (choice == 1) {
+                System.out.print("\n\nPlease enter values to perform projection (\"a, b, c\" or * to project all fields):\n");
+                String projection = in.readLine();
+
+                System.out.print("\n\nPlease enter values to perform selection (\"a = '?'\" or * to skip selection):\n");
+                String selection = in.readLine();
+
+                if (selection.equals("*")) {
+                    query = "SELECT " + projection + " FROM " + tableName;
+                } else {
+                    query = "SELECT " + projection + " FROM " + tableName + " WHERE " + selection;
+                }
+            }
+
+            // execute query
             Statement statement = con.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
+            ResultSet resultSet = statement.executeQuery(query);
             ResultSetMetaData rsMetaData = resultSet.getMetaData();
 
             // get number of columns
@@ -687,6 +722,8 @@ public class Hospital implements ActionListener {
                 System.out.println("\n");
             }
             statement.close();
+        }catch(IOException e){
+            System.out.println("IOException!");
         } catch (SQLException ex) {
             System.out.println("Message: " + ex.getMessage());
         }
