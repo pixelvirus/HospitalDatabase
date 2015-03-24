@@ -6,18 +6,37 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
-import java.awt.FlowLayout;
-
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JTable;
-import javax.swing.AbstractListModel;
 import javax.swing.JButton;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 
 import model.SelectTableModel;
+
+import javax.swing.JFormattedTextField;
+
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+
+import javax.swing.SwingConstants;
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+
+import java.awt.Font;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 /**
  * Simple GUI for the Hospital Staff View
@@ -49,37 +68,51 @@ public class StaffUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	@SuppressWarnings({ "serial", "rawtypes", "unchecked" })
+
 	public StaffUI() {
 		super("Hospital Staff View");
+		initGUI();
+	}
+	private void initGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 800, 400);
+		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		JMenuItem mntmJoin = new JMenuItem("Join");
+		menuBar.add(mntmJoin);
+		
+		JMenuItem mntmDivision = new JMenuItem("Division");
+		menuBar.add(mntmDivision);
+		
+		JMenuItem mntmAggregation = new JMenuItem("Aggregation");
+		menuBar.add(mntmAggregation);
+		
+		JMenuItem mntmGroup = new JMenuItem("Group");
+		menuBar.add(mntmGroup);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
-		
-		JPanel panel = new JPanel();
-		contentPane.add(panel, BorderLayout.SOUTH);
-		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
-		// TODO implement actions for the buttons
-		JButton btnAdd = new JButton("Add");
-		panel.add(btnAdd);
-		
-		JButton btnDelete = new JButton("Delete");
-		panel.add(btnDelete);
-		
-		JButton btnUpdate = new JButton("Update");
-		panel.add(btnUpdate);
-		
+
+		String[] controlOptions = {"Action...",
+				"Add","Delete","Project","Update"};
+
 		JScrollPane scrollPane = new JScrollPane();
 		contentPane.add(scrollPane, BorderLayout.CENTER);
-		
+
 		table = new JTable();
+		table.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
 		scrollPane.setViewportView(table);
-		
-		JList list = new JList();
+
+
+		JPanel controlPanel = new JPanel();
+		contentPane.add(controlPanel, BorderLayout.WEST);
+
+		String[] tables = new String[] {"Patients", "Doctors"};
+		JList list = new JList(tables);
+		list.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
 		list.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				// Get the JList model
@@ -95,17 +128,52 @@ public class StaffUI extends JFrame {
 				table.setModel(new SelectTableModel(tableName));
 			}
 		});
-		list.setModel(new AbstractListModel() {
-			// Populate the list with the name of the tables.
-			String[] values = new String[] {"Patients", "Doctors"};
-			public int getSize() {
-				return values.length;
-			}
-			public Object getElementAt(int index) {
-				return values[index];
+		controlPanel.setLayout(new BorderLayout(0, 0));
+		controlPanel.add(list,BorderLayout.CENTER);
+		JComboBox comboBox = new JComboBox(controlOptions);
+		comboBox.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		comboBox.setToolTipText("Choose an action to perform.");
+		controlPanel.add(comboBox, BorderLayout.NORTH);
+		comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JComboBox cb = (JComboBox) e.getSource();
+				String cmd = (String) cb.getSelectedItem();
+				cb.setSelectedItem((Object) "Action...");
+				String message, title;
+				switch (cmd) {
+				case "Add":
+					//TODO
+					message = "Please enter all attributes " 
+							+ "separated by semicolon.";
+					title = "Add tuple to database";
+					break;
+				case "Delete":
+					//TODO
+					message = "Please enter the primary key "
+					+ "of the tuple to be deleted.";
+					title = "Delete tuple from database";
+					break;
+				case "Project":
+					//TODO
+					message = "Please enter the attributes to project on.";
+					title = "Project table";
+					break;
+				case "Update":
+					//TODO
+					message = "Please enter all attributes"
+							+ "separated by semicolon.";
+					title = "Update";
+					break;
+				default:
+					return;
+				}
+
+				String response = (String) JOptionPane.showInputDialog(cb, 
+						message, title, JOptionPane.QUESTION_MESSAGE);
+				if (response != null)
+					System.out.println(response);
 			}
 		});
-		contentPane.add(list, BorderLayout.WEST);
 	}
 
 }
