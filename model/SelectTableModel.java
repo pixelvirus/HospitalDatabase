@@ -9,13 +9,28 @@ import javax.swing.table.AbstractTableModel;
  */
 @SuppressWarnings("serial")
 public class SelectTableModel extends AbstractTableModel {
-		private String[] columnNames;
-		private String[][] data;
+	private String[] columnNames;
+	private String[][] data;
 
 	public SelectTableModel(String[] columnNames, String[][] data) {
 		super();
 		this.columnNames = columnNames;
 		this.data = data;
+	}
+
+	public SelectTableModel(String tableName, String command, String input) {
+		switch (command) {
+		case "Add":
+			//TODO
+		case "Delete":
+			//TODO
+		case "Project":
+			//TODO
+		case "Update":
+			//TODO
+		default:
+			return;
+		}
 	}
 
 	/**
@@ -57,7 +72,7 @@ public class SelectTableModel extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		return (Object) data[rowIndex][columnIndex];
 	}
-	
+
 	@Override
 	public String getColumnName(int column) {
 		return columnNames[column];
