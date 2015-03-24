@@ -23,7 +23,7 @@ public class SelectTableModel extends AbstractTableModel {
 	 * @param tableName name of table as String
 	 */
 	public SelectTableModel(String tableName) {
-		// TODO Replace stub with method calls to hospital.java to do work.
+		// TODO Replace stub with method calls to Hospital.java to do work.
 		if (tableName.equalsIgnoreCase("Patients")) {
 			String[] pColumn = {"PT_ID","PT_NAME","PHONE","ADDRESS"
 					,"CITY","PROZIP","INSURANCE"};

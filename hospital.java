@@ -400,7 +400,7 @@ public class Hospital implements ActionListener {
                         updateTableValue(tblUpperCase);
                         break;
                     case 4:
-                        showTableRows(tblUpperCase);
+                        showTableData(tblUpperCase);
                         break;
                     case 5:
                         quit = true;
@@ -572,12 +572,15 @@ public class Hospital implements ActionListener {
             while (cond) {
                 try {
                     choice = Integer.parseInt(in.readLine());
-                    cond = false;
+                    if (choice > 0 && choice <= columnNum + 1) {
+                        cond = false;
+                    } else {
+                        System.out.println("Please enter an available value!");
+                    }
                 } catch (NumberFormatException e) {
                     System.out.println("Your input must contain numbers only! Try again: ");
                 }
             }
-
             // Back option
             if (choice == columnNum + 1) {
                 return;
@@ -644,8 +647,15 @@ public class Hospital implements ActionListener {
     /*
      * display all table data with column width automatically sized to match
      */
-    private void showTableRows(String tableName) {
+    private void showTableData(String tableName) {
         try {
+            System.out.print("\n\nPlease choose an option: \n");
+            System.out.print("1.  Projection\n");
+            System.out.print("2.  Selection\n");
+            System.out.print("3.  View entire table\n");
+
+            //todo
+
             Statement statement = con.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + tableName);
             ResultSetMetaData rsMetaData = resultSet.getMetaData();
