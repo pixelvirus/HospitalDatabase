@@ -1,9 +1,13 @@
 // We need to import the java.sql package to use JDBC
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 // for reading from the command line
 import java.io.*;
+
 // for the login window
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -638,6 +642,26 @@ public class HospitalDatabase implements ActionListener {
                         try {
                             int value = Integer.parseInt(in.readLine());
                             preparedStatement.setInt(i, value);
+                            cond = false;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Your input must contain valid integers only! Try again: ");
+                        }
+                    }
+                }else if (columnType.equals("DATE")) {
+                    boolean cond = true;                                       
+                    while (cond) {
+                        try {
+                        	SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+                        	java.util.Date parsed = null;
+							try {
+								parsed = format.parse(in.readLine());
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+                            
+                        	java.sql.Date sql = new java.sql.Date(parsed.getTime());
+                          	preparedStatement.setDate(i, sql);
                             cond = false;
                         } catch (NumberFormatException e) {
                             System.out.println("Your input must contain valid integers only! Try again: ");
