@@ -651,7 +651,7 @@ public class HospitalDatabase implements ActionListener {
                     boolean cond = true;                                       
                     while (cond) {
                         try {
-                        	SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+                        	SimpleDateFormat format = new SimpleDateFormat("HH:mm-dd-MM-yyyy");
                         	java.util.Date parsed = null;
 							try {
 								parsed = format.parse(in.readLine());
@@ -918,7 +918,7 @@ public class HospitalDatabase implements ActionListener {
 
             // display column names
             for (int i = 1; i <= numCols; i++) {
-                int displaySize = rsMetaData.getColumnDisplaySize(i) + 1;
+                int displaySize = rsMetaData.getColumnDisplaySize(i) + 20;
                 String columnName = rsMetaData.getColumnName(i);
                 availableColumns.add(columnName);
                 columnWidths.add(displaySize);
