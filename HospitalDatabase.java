@@ -169,15 +169,23 @@ public class HospitalDatabase implements ActionListener {
 
             while (!quit) {
                 System.out.print("\n\nPlease choose an option: \n");
-                System.out.print("1.  Run sql directly (e.g. create or drop table)\n");
-                System.out.print("2.  Modify or view an existing table\n");
-                System.out.print("3.  Quit\n>> ");
+                System.out.print("1.  Output total costs owing for a patient.\n");
+                System.out.print("2.  Find doctors with a given specialty.\n");
+                System.out.print("3.  Find average cost of commonly prescribed medications.\n");
+                System.out.print("4.  Find doctors who have done procedures in every operating room.\n");
+                System.out.print("5.  Modify or view an existing table\n");
+                System.out.print("6.  Run sql directly (e.g. create or drop table)\n");
+                System.out.print("7.  Quit\n>> ");
 
                 boolean cond = true;
                 while (cond) {
                     try {
                         choice = Integer.parseInt(in.readLine());
-                        cond = false;
+                        if (choice >= 1 && choice <= 7) {
+                            cond = false;
+                        } else {
+                            System.out.println("Please enter an available option!");
+                        }
                     } catch (NumberFormatException e) {
                         System.out.println("Your input must contain valid integers only! Try again: ");
                     }
@@ -185,12 +193,24 @@ public class HospitalDatabase implements ActionListener {
 
                 switch (choice) {
                     case 1:
-                        runSql();
+                        genBill();
                         break;
                     case 2:
-                        chooseTable();
+                        findSpec();
                         break;
                     case 3:
+                        findAveMedCost();
+                        break;
+                    case 4:
+                        findAllORDocs();
+                        break;
+                    case 5:
+                        chooseTable();
+                        break;
+                    case 6:
+                        runSql();
+                        break;
+                    case 7:
                         quit = true;
                 }
             }
@@ -209,6 +229,178 @@ public class HospitalDatabase implements ActionListener {
         } catch (SQLException ex) {
             System.out.println("Message: " + ex.getMessage());
         }
+    }
+
+    /*
+     * generate a patient's bill
+     */
+    private void genBill() {
+        
+        try {
+            System.out.print("\nEnter patient's ID number: ");
+            int pt_id=0;
+            boolean cond = true;
+            while (cond) {
+                try {
+                    pt_id = Integer.parseInt(in.readLine());
+                    cond = false;
+                } catch (NumberFormatException e) {
+                    System.out.println("Your input must contain valid integers only! Try again: ");
+                }
+            }
+        
+            String query1 = "SELECT Sum(P.cost) FROM Procedures P, Performs F WHERE pt_id='" + pt_id + "' AND P.proc_id=F.proc_id";
+            Statement stmt1 = con.createStatement();
+            ResultSet rs1 = stmt1.executeQuery(query1);
+            
+            int pCost=0;
+            while(rs1.next()){
+                pCost = rs1.getInt();
+            }
+            System.out.println("Patient "+pt_id+" owes $"+pCost+" for procedures.");
+            
+        
+            String query2 = "SELECT Sum(M.cost) FROM Medications M, Prescribes P WHERE pt_id='" + pt_id + "' AND M.med_id=P.med_id";
+            Statement stmt2 = con.createStatement();
+            ResultSet rs2 = stmt2.executeQuery(query2);
+            
+            int mCost=0;
+            while(rs2.next()){
+                mCost = rs2.getInt();
+            }
+            System.out.println("Patient "+pt_id+" owes $"+mCost+" for medications."); 
+            stmt1.close();
+            stmt2.close();
+        } catch(IOException e){
+            System.out.println("IOException!");
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }   
+    }
+    
+    
+    /*
+     * find doctors with a given specialty
+     */
+    private void findSpec() {
+        
+        try {
+            System.out.print("\nEnter a specialty: ");
+            String spec = in.readLine();
+        
+            String query = "SELECT do_name FROM Doctors WHERE specialization='" + spec + "'";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            ResultSetMetaData rsMetaData = rs.getMetaData();
+
+            // get number of columns
+            int numCols = rsMetaData.getColumnCount();
+
+            ArrayList<String> availableColumns = new ArrayList<String>();
+            ArrayList<Integer> columnWidths = new ArrayList<Integer>();
+
+            // display column names
+            for (int i = 1; i <= numCols; i++) {
+                int displaySize = rsMetaData.getColumnDisplaySize(i) + 1;
+                String columnName = rsMetaData.getColumnName(i);
+                availableColumns.add(columnName);
+                columnWidths.add(displaySize);
+                System.out.printf("%-" + displaySize + "." + displaySize + "s", columnName);
+            }
+            System.out.println("\n");
+
+            // display rows
+            while (resultSet.next()) {
+                for (int i = 0; i < numCols; i++) {
+                    String columnName = availableColumns.get(i);
+                    Integer columnSize = columnWidths.get(i);
+                    String rowData = resultSet.getString(columnName);
+                    System.out.printf("%-" + columnSize + "." + columnSize + "s", rowData);
+                }
+                System.out.println("\n");
+            }
+            stmt.close();
+                    
+        } catch(IOException e){
+            System.out.println("IOException!");
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }   
+    }
+    
+    
+    /*
+     * find ave cost of medications prescribed to at least 5 different patients
+     */
+    private void findAveMedCost() {
+        
+        try {
+        
+            String query = "SELECT AVG(M.cost) FROM Medications M, Prescribes P WHERE P.med_id=M.med_id GROUP BY P.med_id HAVING 4<COUNT(DISTINCT P.pt_id)";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt1.executeQuery(query);
+            
+            int cost=0;
+            while(rs.next()){
+                cost = rs.getInt();
+            }
+            System.out.println("Average cost of medications prescribed to at least five patients is $" + cost);
+            
+            stmt.close();
+        } catch(IOException e){
+            System.out.println("IOException!");
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }   
+    }
+    
+    
+    /*
+     * find all doctors who have done procedures in all operating rooms
+     */
+    private void findAllORDocs() {
+        
+        try {
+            System.out.println("Doctors who have done procedures in all operating rooms:");
+            String query = "SELECT do_name FROM Doctors D WHERE NOT EXISTS "
+                    + "(SELECT O.oproom_id FROM OperatingRoom O WHERE NOT EXISTS "
+                    + "(SELECT O.oproom_id FROM Performs P WHERE P.do_id=D.do_id AND P.oproom_id=O.oproom_id)");
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            ResultSetMetaData rsMetaData = rs.getMetaData();
+
+            // get number of columns
+            int numCols = rsMetaData.getColumnCount();
+
+            ArrayList<String> availableColumns = new ArrayList<String>();
+            ArrayList<Integer> columnWidths = new ArrayList<Integer>();
+
+            // display column names
+            for (int i = 1; i <= numCols; i++) {
+                int displaySize = rsMetaData.getColumnDisplaySize(i) + 1;
+                String columnName = rsMetaData.getColumnName(i);
+                availableColumns.add(columnName);
+                columnWidths.add(displaySize);
+                System.out.printf("%-" + displaySize + "." + displaySize + "s", columnName);
+            }
+            System.out.println("\n");
+
+            // display rows
+            while (resultSet.next()) {
+                for (int i = 0; i < numCols; i++) {
+                    String columnName = availableColumns.get(i);
+                    Integer columnSize = columnWidths.get(i);
+                    String rowData = resultSet.getString(columnName);
+                    System.out.printf("%-" + columnSize + "." + columnSize + "s", rowData);
+                }
+                System.out.println("\n");
+            }
+            stmt.close();
+        } catch(IOException e){
+            System.out.println("IOException!");
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }   
     }
 
     /*
