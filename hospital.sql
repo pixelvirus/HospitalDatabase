@@ -21,7 +21,9 @@ create table Bookings
 (
 	bk_id int not null primary key,
 	bk_startdate date,
-	bk_enddate date
+	bk_enddate date,
+	constraint bookingdate
+	check(bk_startdate<bk_enddate)
 	);
 
 create table OperatingRooms
@@ -50,7 +52,7 @@ create table RecoveryRoomBeds
 	recoveryroom_id int,
 	recoveryroombed_bedNo int not null,
 	primary key (recoveryroom_id,recoveryroombed_bedNo),
-	foreign key (recoveryroom_id) references RecoveryRooms
+	foreign key (recoveryroom_id) references RecoveryRooms on delete cascade	
   ); 
  
 create table BookingReservesRecoveryRooms
@@ -139,8 +141,8 @@ create table HasAOffice
 	do_id int not null,
 	office_id int not null,
 	primary key (do_id, office_id),
-	foreign key (do_id) references Doctors,
-	foreign key (office_id) references Offices 
+	foreign key (do_id) references Doctors on delete cascade,
+	foreign key (office_id) references Offices on delete cascade
   );
 
 create table StaffUsers
