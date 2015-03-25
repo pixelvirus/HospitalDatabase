@@ -235,6 +235,7 @@ public class HospitalDatabase implements ActionListener {
      * generate a patient's bill
      */
     private void genBill() {
+        
         try {
             System.out.print("\nEnter patient's ID number: ");
             int pt_id=0;
@@ -254,7 +255,7 @@ public class HospitalDatabase implements ActionListener {
             
             int pCost=0;
             while(rs1.next()){
-                pCost = rs1.getInt(1);
+                pCost = rs1.getInt();
             }
             System.out.println("Patient "+pt_id+" owes $"+pCost+" for procedures.");
             
@@ -265,7 +266,7 @@ public class HospitalDatabase implements ActionListener {
             
             int mCost=0;
             while(rs2.next()){
-                mCost = rs2.getInt(1);
+                mCost = rs2.getInt();
             }
             System.out.println("Patient "+pt_id+" owes $"+mCost+" for medications."); 
             stmt1.close();
@@ -282,6 +283,7 @@ public class HospitalDatabase implements ActionListener {
      * find doctors with a given specialty
      */
     private void findSpec() {
+        
         try {
             System.out.print("\nEnter a specialty: ");
             String spec = in.readLine();
@@ -308,16 +310,17 @@ public class HospitalDatabase implements ActionListener {
             System.out.println("\n");
 
             // display rows
-            while (rs.next()) {
+            while (resultSet.next()) {
                 for (int i = 0; i < numCols; i++) {
                     String columnName = availableColumns.get(i);
                     Integer columnSize = columnWidths.get(i);
-                    String rowData = rs.getString(columnName);
+                    String rowData = resultSet.getString(columnName);
                     System.out.printf("%-" + columnSize + "." + columnSize + "s", rowData);
                 }
                 System.out.println("\n");
             }
             stmt.close();
+                    
         } catch(IOException e){
             System.out.println("IOException!");
         } catch (SQLException ex) {
@@ -330,17 +333,22 @@ public class HospitalDatabase implements ActionListener {
      * find ave cost of medications prescribed to at least 5 different patients
      */
     private void findAveMedCost() {
+        
         try {
+        
             String query = "SELECT AVG(M.cost) FROM Medications M, Prescribes P WHERE P.med_id=M.med_id GROUP BY P.med_id HAVING 4<COUNT(DISTINCT P.pt_id)";
             Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            ResultSet rs = stmt1.executeQuery(query);
             
             int cost=0;
             while(rs.next()){
-                cost = rs.getInt(1);
+                cost = rs.getInt();
             }
             System.out.println("Average cost of medications prescribed to at least five patients is $" + cost);
+            
             stmt.close();
+        } catch(IOException e){
+            System.out.println("IOException!");
         } catch (SQLException ex) {
             System.out.println("Message: " + ex.getMessage());
         }   
@@ -351,11 +359,12 @@ public class HospitalDatabase implements ActionListener {
      * find all doctors who have done procedures in all operating rooms
      */
     private void findAllORDocs() {
+        
         try {
             System.out.println("Doctors who have done procedures in all operating rooms:");
             String query = "SELECT do_name FROM Doctors D WHERE NOT EXISTS "
                     + "(SELECT O.oproom_id FROM OperatingRoom O WHERE NOT EXISTS "
-                    + "(SELECT O.oproom_id FROM Performs P WHERE P.do_id=D.do_id AND P.oproom_id=O.oproom_id)";
+                    + "(SELECT O.oproom_id FROM Performs P WHERE P.do_id=D.do_id AND P.oproom_id=O.oproom_id)");
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             ResultSetMetaData rsMetaData = rs.getMetaData();
@@ -377,16 +386,18 @@ public class HospitalDatabase implements ActionListener {
             System.out.println("\n");
 
             // display rows
-            while (rs.next()) {
+            while (resultSet.next()) {
                 for (int i = 0; i < numCols; i++) {
                     String columnName = availableColumns.get(i);
                     Integer columnSize = columnWidths.get(i);
-                    String rowData = rs.getString(columnName);
+                    String rowData = resultSet.getString(columnName);
                     System.out.printf("%-" + columnSize + "." + columnSize + "s", rowData);
                 }
                 System.out.println("\n");
             }
             stmt.close();
+        } catch(IOException e){
+            System.out.println("IOException!");
         } catch (SQLException ex) {
             System.out.println("Message: " + ex.getMessage());
         }   
