@@ -651,7 +651,7 @@ public class HospitalDatabase implements ActionListener {
                     boolean cond = true;                                       
                     while (cond) {
                         try {
-                        	SimpleDateFormat format = new SimpleDateFormat("HH:mm-dd-MM-yyyy");
+                        	SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
                         	java.util.Date parsed = null;
 							try {
 								parsed = format.parse(in.readLine());
