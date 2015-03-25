@@ -644,24 +644,18 @@ public class HospitalDatabase implements ActionListener {
                             System.out.println("Your input must contain valid integers only! Try again: ");
                         }
                     }
-                }else if (columnType.equals("DATE")) {
+                } else if (columnType.equals("DATE")) {
                     boolean cond = true;                                       
                     while (cond) {
+                        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+                        java.util.Date parsed;
                         try {
-                        	SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-                        	java.util.Date parsed = null;
-							try {
-								parsed = format.parse(in.readLine());
-							} catch (ParseException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-                            
-                        	java.sql.Date sql = new java.sql.Date(parsed.getTime());
-                          	preparedStatement.setDate(i, sql);
+                            parsed = format.parse(in.readLine());
+                            Date sql = new Date(parsed.getTime());
+                            preparedStatement.setDate(i, sql);
                             cond = false;
-                        } catch (NumberFormatException e) {
-                            System.out.println("Your input must contain valid integers only! Try again: ");
+                        } catch (ParseException e) {
+                            System.out.println("Please enter a valid date!");
                         }
                     }
                 } else {
