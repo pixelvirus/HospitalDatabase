@@ -336,10 +336,16 @@ public class HospitalDatabase implements ActionListener {
             ResultSet rs = stmt.executeQuery(query);
             
             int cost=0;
+            int sum=0;
+            int counter=0;
+            int avg=0;
             while(rs.next()){
                 cost = rs.getInt(1);
+                sum+=cost;
+                counter++;
             }
-            System.out.println("Average cost of medications prescribed to at least five patients is $" + cost);
+            avg= sum/counter;
+            System.out.println("Average cost of medications prescribed to at least five patients is $" + avg);
             stmt.close();
         } catch (SQLException ex) {
             System.out.println("Message: " + ex.getMessage());
