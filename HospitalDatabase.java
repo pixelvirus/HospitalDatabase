@@ -354,8 +354,8 @@ public class HospitalDatabase implements ActionListener {
         try {
             System.out.println("Doctors who have done procedures in all operating rooms:");
             String query = "SELECT do_name FROM Doctors D WHERE NOT EXISTS "
-                    + "(SELECT O.oproom_id FROM OperatingRoom O WHERE NOT EXISTS "
-                    + "(SELECT O.oproom_id FROM Performs P WHERE P.do_id=D.do_id AND P.oproom_id=O.oproom_id)";
+                    + "(SELECT O.oproom_id FROM OperatingRooms O WHERE NOT EXISTS "
+                    + "(SELECT O.oproom_id FROM Performs P WHERE P.do_id=D.do_id AND P.oproom_id=O.oproom_id))";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             ResultSetMetaData rsMetaData = rs.getMetaData();

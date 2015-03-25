@@ -24,6 +24,9 @@ insert into doctors
 values('469','Eric Cheng','cardiology');
 
 insert into doctors
+values('713','David Song','cardiology');
+
+insert into doctors
 values('231','Ben Byers','dermatology');
 
 insert into doctors
@@ -229,6 +232,9 @@ insert into prescribes
 values('10001','469','11111111',TO_DATE('02-01-2015','DD-MM-YYYY'),'2 pills, once/day');
 
 insert into prescribes
+values('10001','469','22222222',TO_DATE('02-01-2015','DD-MM-YYYY'),'2 pills, once/day');
+
+insert into prescribes
 values('15602','231','22222222',TO_DATE('23-12-2015','DD-MM-YYYY'),'twice/day');
 
 insert into prescribes
@@ -241,6 +247,9 @@ insert into prescribes
 values('56841','555','55555555',TO_DATE('12-01-2015','DD-MM-YYYY'),'1/week');
 
 /*Performs*/
+insert into performs
+values('10001','469','10101','3000',TO_DATE('02-01-2015','DD-MM-YYYY'));
+
 insert into performs
 values('10001','469','30303','3000',TO_DATE('02-01-2015','DD-MM-YYYY'));
 
