@@ -647,12 +647,14 @@ public class HospitalDatabase implements ActionListener {
                 } else if (columnType.equals("DATE")) {
                     boolean cond = true;                                       
                     while (cond) {
-                        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+                        SimpleDateFormat format = new SimpleDateFormat("HH:mm-dd-MM-yyyy");
                         java.util.Date parsed;
                         try {
                             parsed = format.parse(in.readLine());
-                            Date sql = new Date(parsed.getTime());
-                            preparedStatement.setDate(i, sql);
+                            Date sqldate = new Date(parsed.getTime());
+                            Time sqltime = new Time(parsed.getTime());
+                            preparedStatement.setDate(i, sqldate);
+                            preparedStatement.setTime(i, sqltime);
                             cond = false;
                         } catch (ParseException e) {
                             System.out.println("Please enter a valid date!");
