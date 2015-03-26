@@ -272,8 +272,79 @@ public class HospitalDatabase implements ActionListener {
                 mCost = rs2.getInt(1);
             }
             System.out.println("Patient "+pt_id+" owes $"+mCost+" for medications."); 
+
+            System.out.println("Detailed costs: ");
+
+            String query3 = "SELECT M.med_name, P.prescribes_date, M.cost FROM Medications M, Prescribes P WHERE M.med_id=P.med_id AND P.pt_id='" + pt_id +"'";
+            Statement stmt3 = con.createStatement();
+            ResultSet rs3 = stmt3.executeQuery(query3);
+
+            ResultSetMetaData rs3MetaData = rs3.getMetaData();
+
+            // get number of columns
+            int numCols3 = rs3MetaData.getColumnCount();
+
+            ArrayList<String> availableColumns3 = new ArrayList<String>();
+            ArrayList<Integer> columnWidths3 = new ArrayList<Integer>();
+
+            // display column names
+            for (int i = 1; i <= numCols3; i++) {
+                int displaySize3 = rs3MetaData.getColumnDisplaySize(i) + 1;
+                String columnName3 = rs3MetaData.getColumnName(i);
+                availableColumns3.add(columnName3);
+                columnWidths3.add(displaySize3);
+                System.out.printf("%-" + displaySize3 + "." + displaySize3 + "s", columnName3);
+            }
+            System.out.println("\n");
+
+            // display rows
+            while (rs3.next()) {
+                for (int i = 0; i < numCols3; i++) {
+                    String columnName3 = availableColumns3.get(i);
+                    Integer columnSize3 = columnWidths3.get(i);
+                    String rowData3 = rs3.getString(columnName3);
+                    System.out.printf("%-" + columnSize3 + "." + columnSize3 + "s", rowData3);
+                }
+                System.out.println("\n");
+            }
+
+            String query4 = "SELECT P.proc_name, F.performs_date, P.cost FROM Procedures P, Performs F WHERE P.proc_id=F.proc_id AND F.pt_id='" + pt_id +"'";
+            Statement stmt4 = con.createStatement();
+            ResultSet rs4 = stmt4.executeQuery(query4);
+
+            ResultSetMetaData rs4MetaData = rs4.getMetaData();
+
+            // get number of columns
+            int numCols4 = rs4MetaData.getColumnCount();
+
+            ArrayList<String> availableColumns4 = new ArrayList<String>();
+            ArrayList<Integer> columnWidths4 = new ArrayList<Integer>();
+
+            // display column names
+            for (int i = 1; i <= numCols4; i++) {
+                int displaySize4 = rs4MetaData.getColumnDisplaySize(i) + 1;
+                String columnName4 = rs4MetaData.getColumnName(i);
+                availableColumns4.add(columnName4);
+                columnWidths4.add(displaySize4);
+                System.out.printf("%-" + displaySize4 + "." + displaySize4 + "s", columnName4);
+            }
+            System.out.println("\n");
+
+            // display rows
+            while (rs4.next()) {
+                for (int i = 0; i < numCols4; i++) {
+                    String columnName4 = availableColumns4.get(i);
+                    Integer columnSize4 = columnWidths4.get(i);
+                    String rowData4 = rs4.getString(columnName4);
+                    System.out.printf("%-" + columnSize4 + "." + columnSize4 + "s", rowData4);
+                }
+                System.out.println("\n");
+            }
+
             stmt1.close();
             stmt2.close();
+            stmt3.close();
+            stmt4.close();
         } catch(IOException e){
             System.out.println("IOException!");
         } catch (SQLException ex) {
