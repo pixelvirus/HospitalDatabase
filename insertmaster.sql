@@ -37,7 +37,7 @@ values('876','Lindsay Burnett','oncology');
 
 insert into doctors
 values('555','Katie Freund','rheumatology');
-
+	
 /*Bookings*/
 insert into bookings
 values('111',
