@@ -289,7 +289,7 @@ public class HospitalDatabase implements ActionListener {
 
             // display column names
             for (int i = 1; i <= numCols3; i++) {
-                int displaySize3 = rs3MetaData.getColumnDisplaySize(i) + 1;
+                int displaySize3 = rs3MetaData.getColumnDisplaySize(i) + 20;
                 String columnName3 = rs3MetaData.getColumnName(i);
                 availableColumns3.add(columnName3);
                 columnWidths3.add(displaySize3);
@@ -322,7 +322,7 @@ public class HospitalDatabase implements ActionListener {
 
             // display column names
             for (int i = 1; i <= numCols4; i++) {
-                int displaySize4 = rs4MetaData.getColumnDisplaySize(i) + 1;
+                int displaySize4 = rs4MetaData.getColumnDisplaySize(i) + 20;
                 String columnName4 = rs4MetaData.getColumnName(i);
                 availableColumns4.add(columnName4);
                 columnWidths4.add(displaySize4);
