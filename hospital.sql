@@ -307,9 +307,7 @@ values('5000','suture, needle holder, thread');
 
 /*BookingReservesOperatingRooms*/
 insert into BookingReservesOperatingRooms
-values('111','3000',
-TO_DATE('9:00','HH24:MI'),
-TO_DATE('12:00','HH24:MI'));
+values('111','3000');
 
 insert into BookingReservesOperatingRooms
 values('222','1000');
