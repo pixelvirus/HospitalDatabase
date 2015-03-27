@@ -173,13 +173,16 @@ public class HospitalDatabase implements ActionListener {
 
             while (!quit) {
                 System.out.print("\n\nPlease choose an option: \n");
-                System.out.print("1.  Output total costs owing for a patient.\n");
+                System.out.print("1.  Output total costs for a patient.\n");
                 System.out.print("2.  Find doctors with a given specialty.\n");
                 System.out.print("3.  Find average cost of commonly prescribed medications.\n");
                 System.out.print("4.  Find doctors who have done procedures in every operating room.\n");
-                System.out.print("5.  Modify or view an existing table\n");
-                System.out.print("6.  Run sql directly (e.g. create or drop table)\n");
-                System.out.print("7.  Quit\n>> ");
+                System.out.print("5.  Find all procedures a doctor has or will perform.\n");
+                System.out.print("6.  Find all medications and procedures for a patient.\n");
+                System.out.print("7.  Find all patients currently admitted to recovery rooms.\n");
+                System.out.print("8.  Modify or view an existing table\n");
+                System.out.print("9.  Run sql directly (e.g. create or drop table)\n");
+                System.out.print("10.  Quit\n>> ");
 
                 boolean cond = true;
                 while (cond) {
@@ -209,12 +212,21 @@ public class HospitalDatabase implements ActionListener {
                         findAllORDocs();
                         break;
                     case 5:
-                        chooseTable();
+                        getProcForDoc();
                         break;
                     case 6:
-                        runSql();
+                        getPRForPat();
                         break;
                     case 7:
+                        findAllRecPat();
+                        break;
+                    case 8:
+                        chooseTable();
+                        break;
+                    case 9:
+                        runSql();
+                        break;
+                    case 10:
                         quit = true;
                 }
             }
@@ -235,6 +247,7 @@ public class HospitalDatabase implements ActionListener {
         }
     }
 
+    
     /*
      * generate a patient's bill
      */
@@ -470,6 +483,209 @@ public class HospitalDatabase implements ActionListener {
         }   
     }
 
+    
+    /*
+     * Find all procedures a given doctor has/will perform
+     */
+    private void getProcForDoc() {
+        try {
+            System.out.print("\nEnter doctor's ID number: ");
+            int do_id=0;
+            boolean cond = true;
+            while (cond) {
+                try {
+                    pt_id = Integer.parseInt(in.readLine());
+                    cond = false;
+                } catch (NumberFormatException e) {
+                    System.out.println("Your input must contain valid integers only! Try again: ");
+                }
+            }
+        
+            System.out.println("Doctor " + do_id + " has done the following procedures:\n")
+            
+            String query = "SELECT P.proc_name, F.performs_date FROM Procedures P, Performs F WHERE F.do_id='" + do_id +"' AND F.proc_id=P.proc_id";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            ResultSetMetaData rsMetaData = rs.getMetaData();
+
+            // get number of columns
+            int numCols = rsMetaData.getColumnCount();
+
+            ArrayList<String> availableColumns = new ArrayList<String>();
+            ArrayList<Integer> columnWidths = new ArrayList<Integer>();
+
+            // display column names
+            for (int i = 1; i <= numCols; i++) {
+                int displaySize = rsMetaData.getColumnDisplaySize(i) + 20;
+                String columnName = rsMetaData.getColumnName(i);
+                availableColumns.add(columnName);
+                columnWidths.add(displaySize);
+                System.out.printf("%-" + displaySize + "." + displaySize + "s", columnName);
+            }
+            System.out.println("\n");
+
+            // display rows
+            while (rs.next()) {
+                for (int i = 0; i < numCols; i++) {
+                    String columnName = availableColumns.get(i);
+                    Integer columnSize = columnWidths.get(i);
+                    String rowData = rs.getString(columnName);
+                    System.out.printf("%-" + columnSize + "." + columnSize + "s", rowData);
+                }
+                System.out.println("\n");
+            }
+
+            stmt.close();
+        } catch(IOException e){
+            System.out.println("IOException!");
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }   
+    }
+    
+    
+    
+    /*
+     * get all procedures and medication for a given patient, including date and doctor
+     */
+    private void getPRforPat() {
+        try {
+            System.out.print("\nEnter patient's ID number: ");
+            int pt_id=0;
+            boolean cond = true;
+            while (cond) {
+                try {
+                    pt_id = Integer.parseInt(in.readLine());
+                    cond = false;
+                } catch (NumberFormatException e) {
+                    System.out.println("Your input must contain valid integers only! Try again: ");
+                }
+            }
+            
+            System.out.println("All medications for patient " + pt_id + ":\n");
+            
+            String query3 = "SELECT M.med_name, D.do_name, P.prescribes_date FROM Medications M, Prescribes P, Doctors D WHERE M.med_id=P.med_id AND P.pt_id='" + pt_id + "' AND D.do_id=P.do_id";
+            Statement stmt3 = con.createStatement();
+            ResultSet rs3 = stmt3.executeQuery(query3);
+
+            ResultSetMetaData rs3MetaData = rs3.getMetaData();
+
+            // get number of columns
+            int numCols3 = rs3MetaData.getColumnCount();
+
+            ArrayList<String> availableColumns3 = new ArrayList<String>();
+            ArrayList<Integer> columnWidths3 = new ArrayList<Integer>();
+
+            // display column names
+            for (int i = 1; i <= numCols3; i++) {
+                int displaySize3 = rs3MetaData.getColumnDisplaySize(i) + 20;
+                String columnName3 = rs3MetaData.getColumnName(i);
+                availableColumns3.add(columnName3);
+                columnWidths3.add(displaySize3);
+                System.out.printf("%-" + displaySize3 + "." + displaySize3 + "s", columnName3);
+            }
+            System.out.println("\n");
+
+            // display rows
+            while (rs3.next()) {
+                for (int i = 0; i < numCols3; i++) {
+                    String columnName3 = availableColumns3.get(i);
+                    Integer columnSize3 = columnWidths3.get(i);
+                    String rowData3 = rs3.getString(columnName3);
+                    System.out.printf("%-" + columnSize3 + "." + columnSize3 + "s", rowData3);
+                }
+                System.out.println("\n");
+            }
+
+            System.out.println("\nAll procedures for patient " + pt_id + ":\n");
+            
+            String query4 = "SELECT P.proc_name, D.do_name, F.performs_date FROM Procedures P, Performs F, Doctors D WHERE P.proc_id=F.proc_id AND F.pt_id='" + pt_id + "' AND D.do_id=F.do_id";
+            Statement stmt4 = con.createStatement();
+            ResultSet rs4 = stmt4.executeQuery(query4);
+
+            ResultSetMetaData rs4MetaData = rs4.getMetaData();
+
+            // get number of columns
+            int numCols4 = rs4MetaData.getColumnCount();
+
+            ArrayList<String> availableColumns4 = new ArrayList<String>();
+            ArrayList<Integer> columnWidths4 = new ArrayList<Integer>();
+
+            // display column names
+            for (int i = 1; i <= numCols4; i++) {
+                int displaySize4 = rs4MetaData.getColumnDisplaySize(i) + 20;
+                String columnName4 = rs4MetaData.getColumnName(i);
+                availableColumns4.add(columnName4);
+                columnWidths4.add(displaySize4);
+                System.out.printf("%-" + displaySize4 + "." + displaySize4 + "s", columnName4);
+            }
+            System.out.println("\n");
+
+            // display rows
+            while (rs4.next()) {
+                for (int i = 0; i < numCols4; i++) {
+                    String columnName4 = availableColumns4.get(i);
+                    Integer columnSize4 = columnWidths4.get(i);
+                    String rowData4 = rs4.getString(columnName4);
+                    System.out.printf("%-" + columnSize4 + "." + columnSize4 + "s", rowData4);
+                }
+                System.out.println("\n");
+            }
+
+            stmt3.close();
+            stmt4.close();
+        } catch(IOException e){
+            System.out.println("IOException!");
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }   
+    }
+    
+    
+    /*
+     * get all patients currently in recovery
+     */
+    private void findAllRecPat() {
+        try {
+            System.out.println("Patients currently in recovery:\n");
+            String query = "SELECT P.pt_name, A.recoveryroom_id, A.recoveryroombed_bedNo FROM AdmittedTo A, Patients P WHERE A.pt_id=P.pt_id";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            ResultSetMetaData rsMetaData = rs.getMetaData();
+
+            // get number of columns
+            int numCols = rsMetaData.getColumnCount();
+
+            ArrayList<String> availableColumns = new ArrayList<String>();
+            ArrayList<Integer> columnWidths = new ArrayList<Integer>();
+
+            // display column names
+            for (int i = 1; i <= numCols; i++) {
+                int displaySize = rsMetaData.getColumnDisplaySize(i) + 1;
+                String columnName = rsMetaData.getColumnName(i);
+                availableColumns.add(columnName);
+                columnWidths.add(displaySize);
+                System.out.printf("%-" + displaySize + "." + displaySize + "s", columnName);
+            }
+            System.out.println("\n");
+
+            // display rows
+            while (rs.next()) {
+                for (int i = 0; i < numCols; i++) {
+                    String columnName = availableColumns.get(i);
+                    Integer columnSize = columnWidths.get(i);
+                    String rowData = rs.getString(columnName);
+                    System.out.printf("%-" + columnSize + "." + columnSize + "s", rowData);
+                }
+                System.out.println("\n");
+            }
+            stmt.close();
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }   
+    }
+    
+    
     /*
      * run sql directly
      */
