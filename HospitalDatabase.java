@@ -900,9 +900,11 @@ public class HospitalDatabase implements ActionListener {
             } else if (choice == 2) {
             	maxMin = "MAX";
             }
-            String query = "SELECT D.do_name, A.AveCost FROM Doctors D, (SELECT P.do_id, AVG(M.cost) AS AveCost " +
-            	"FROM Medications M, Prescribes P, Doctors D WHERE M.med_id=P.med_id GROUP BY P.do_id) A " +
-            	"WHERE A.do_id=D.do_id AND A.AveCost=" + maxMin + "(A.AveCost)";
+            String query = "Select D.do_name, B.AveCost From  Doctors D, " + 
+            	"(Select P.do_id, Avg(M.cost) AS AveCost From Prescribes P, Medications M " +
+        	"WHERE P.med_id=M.med_id Group By P.do_id) As B Where B.AveCost=(Select " + maxMin + "(A.AveCost) " +
+                "From ( Select P.do_id, Avg(M.cost) AS AveCost From Medications M, Prescribes P " +
+                "WHERE M.med_id=P.med_id Group By P.do_id) A) AND B.do_id=D.do_id";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(query);
             ResultSetMetaData rsMetaData = rs.getMetaData();
