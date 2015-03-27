@@ -17,6 +17,7 @@ public class Panel5ModViewTable extends WizardGUIPanel {
 		super(wizardComponents, "Modify or view an existing table");
 		initGUI();
 	}
+
 	private void initGUI() {
 
 		getSplitPane().setRightComponent(scrollPane);
@@ -67,5 +68,4 @@ public class Panel5ModViewTable extends WizardGUIPanel {
 	public void back() {
 		switchPanel(DynamicWizardGUI.PANEL_MENU);
 	}
-
 }

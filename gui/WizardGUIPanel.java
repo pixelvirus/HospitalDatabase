@@ -22,6 +22,7 @@ public abstract class WizardGUIPanel extends JWizardPanel {
 		super(wizardComponents, title);
 		initGUI();
 	}
+
 	private void initGUI() {
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);

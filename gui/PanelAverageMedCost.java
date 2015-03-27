@@ -9,7 +9,4 @@ public class PanelAverageMedCost extends WizardGUIPanel {
 		super(wizardComponents, 
 				"Find average cost of commonly prescribed medications.");
 	}
-	
-	
-
 }

@@ -18,6 +18,7 @@ public class Panel1Menu extends WizardGUIPanel {
 		super(wizardComponents, "Please choose an option:");
 		initGUI();
 	}
+
 	private void initGUI() {
 		list.setModel(new AbstractListModel() {
 			String[] values = new String[] {
@@ -35,8 +36,7 @@ public class Panel1Menu extends WizardGUIPanel {
 			}
 		});
 		list.setSelectedIndex(0);
-		
-		
+
 		getSplitPane().setRightComponent(list);
 	}
 
@@ -81,5 +81,4 @@ public class Panel1Menu extends WizardGUIPanel {
 		getWizardComponents().getBackButton().setText("Back");
 		setBackButtonEnabled(false);
 	}
-
 }

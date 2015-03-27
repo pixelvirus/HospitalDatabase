@@ -121,5 +121,4 @@ public class PanelLogIn extends WizardGUIPanel implements ActionListener {
 			this.getConsoleLog().append(e1.getMessage());
 		}
 	}
-
 }

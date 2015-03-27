@@ -57,7 +57,6 @@ public class PanelPatientCost extends WizardGUIPanel {
 		input.setColumns(10);
 		input.setValue(DEFAULT_INPUT);
 		input.requestFocusInWindow();
-
 	}
 
 	private MaskFormatter createFormatter(String s) {
@@ -85,5 +84,4 @@ public class PanelPatientCost extends WizardGUIPanel {
 		DatabaseConnection.getInstance().billPatient(pid);
 		switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);	
 	}
-
 }

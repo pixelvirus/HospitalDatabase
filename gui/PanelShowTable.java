@@ -45,7 +45,6 @@ public class PanelShowTable extends WizardGUIPanel implements Observer {
 		} catch (SQLException e) {
 			this.getConsoleLog().append("\n" + e.getMessage().trim());
 		}
-		
 	}
 	
 	@Override

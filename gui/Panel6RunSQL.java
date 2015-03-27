@@ -20,6 +20,7 @@ public class Panel6RunSQL extends WizardGUIPanel {
 		textField.setColumns(10);
 		initGUI();
 	}
+
 	private void initGUI() {
 		
 		getSplitPane().setRightComponent(panel);
@@ -44,6 +45,4 @@ public class Panel6RunSQL extends WizardGUIPanel {
 		gbc_textField.gridy = 4;
 		panel.add(textField, gbc_textField);
 	}
-	
-	
 }

@@ -39,5 +39,4 @@ public class PanelStub extends JWizardPanel {
 	public void back() {
 		switchPanel(DynamicWizardGUI.PANEL_MENU);
 	}
-	
 }

@@ -37,7 +37,6 @@ public class DynamicWizardGUI extends JWizardFrame {
 
 	private final DatabaseConnection db = DatabaseConnection.getInstance();
 
-
 	public DynamicWizardGUI() {
 		super();
 		iniGUI();
@@ -80,8 +79,6 @@ public class DynamicWizardGUI extends JWizardFrame {
 		panel = new PanelStub(getWizardComponents());
 		getWizardComponents().addWizardPanel(PANEL_PROJECTION, panel);
 
-		
-
 		setSize(800, 600);
 		Utilities.centerComponentOnScreen(this);
 
@@ -103,7 +100,6 @@ public class DynamicWizardGUI extends JWizardFrame {
 				System.exit(0);
 			}
 		});
-
 	}
 
 	@Override
@@ -121,5 +117,4 @@ public class DynamicWizardGUI extends JWizardFrame {
 			}
 		};
 	};
-
 }

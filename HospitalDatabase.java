@@ -173,15 +173,15 @@ public class HospitalDatabase implements ActionListener {
 
             while (!quit) {
                 System.out.print("\n\nPlease choose an option: \n");
-                System.out.print("1.  Find total costs for a patient.\n");
-                System.out.print("2.  Find doctors with a given specialty.\n");
-                System.out.print("3.  Find average cost of commonly prescribed medications.\n");
-                System.out.print("4.  Find doctors who have done procedures in every operating room.\n");
-                System.out.print("5.  Find all procedures scheduled for a doctor.\n");
-                System.out.print("6.  Find all medications and procedures for a patient.\n");
-                System.out.print("7.  Find all patients currently admitted to recovery rooms.\n");
-                System.out.print("8.  Find all procedures on a given date.\n");
-                System.out.print("9.  Find available recovery room beds.\n");
+                System.out.print("1.   Find total costs for a patient.\n");
+                System.out.print("2.   Find doctors with a given specialty.\n");
+                System.out.print("3.   Find average cost of commonly prescribed medications.\n");
+                System.out.print("4.   Find doctors who have done procedures in every operating room.\n");
+                System.out.print("5.   Find all procedures scheduled for a doctor.\n");
+                System.out.print("6.   Find all medications and procedures for a patient.\n");
+                System.out.print("7.   Find all patients currently admitted to recovery rooms.\n");
+                System.out.print("8.   Find all procedures on a given date.\n");
+                System.out.print("9.   Find available recovery room beds.\n");
                 System.out.print("10.  Find available operating rooms and list sceduled procedures.\n");
                 System.out.print("11.  View or modify tables.\n");
                 System.out.print("12.  Run sql directly (e.g. create or drop table)\n");

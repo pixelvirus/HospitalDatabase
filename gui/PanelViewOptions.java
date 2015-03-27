@@ -16,6 +16,7 @@ public class PanelViewOptions extends WizardGUIPanel {
 		super(wizardComponents, "Please choose an option:");
 		initGUI();
 	}
+
 	private void initGUI() {
 		list.setModel(new AbstractListModel() {
 			String[] values = new String[] {
