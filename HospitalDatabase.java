@@ -191,7 +191,7 @@ public class HospitalDatabase implements ActionListener {
                 while (cond) {
                     try {
                         choice = Integer.parseInt(in.readLine());
-                        if (choice >= 1 && choice <= 7) {
+                        if (choice >= 1 && choice <= 13) {
                             cond = false;
                         } else {
                             System.out.println("Please enter an available option!");
@@ -259,7 +259,6 @@ public class HospitalDatabase implements ActionListener {
         }
     }
 
-    
     /*
      * generate a patient's bill
      */
@@ -377,7 +376,6 @@ public class HospitalDatabase implements ActionListener {
         }   
     }
     
-    
     /*
      * find doctors with a given specialty
      */
@@ -425,7 +423,6 @@ public class HospitalDatabase implements ActionListener {
         }   
     }
     
-    
     /*
      * find ave cost of medications prescribed to at least 5 different patients
      */
@@ -448,7 +445,6 @@ public class HospitalDatabase implements ActionListener {
             System.out.println("Message: " + ex.getMessage());
         }   
     }
-    
     
     /*
      * find all doctors who have done procedures in all operating rooms
@@ -494,7 +490,6 @@ public class HospitalDatabase implements ActionListener {
             System.out.println("Message: " + ex.getMessage());
         }   
     }
-
     
     /*
      * Find all procedures a given doctor has/will perform
@@ -554,8 +549,6 @@ public class HospitalDatabase implements ActionListener {
             System.out.println("Message: " + ex.getMessage());
         }   
     }
-    
-    
     
     /*
      * get all procedures and medication for a given patient, including date and doctor
@@ -653,7 +646,6 @@ public class HospitalDatabase implements ActionListener {
         }   
     }
     
-    
     /*
      * get all patients currently in recovery
      */
@@ -696,7 +688,6 @@ public class HospitalDatabase implements ActionListener {
             System.out.println("Message: " + ex.getMessage());
         }   
     }
-    
     
     /*
      * Find empty recovery room beds
@@ -743,7 +734,6 @@ public class HospitalDatabase implements ActionListener {
         }   
     }
     
-    
     /*
      * find which operating rooms are avilable and which are booked with procedures
      */
@@ -751,9 +741,8 @@ public class HospitalDatabase implements ActionListener {
         try {
             System.out.print("\nEnter the date in the format DD-MM-YYYY: ");
             String date = in.readLine();
-        
             
-            System.out.println("Available operating rooms:\n")
+            System.out.println("Available operating rooms:\n");
             String query = "SELECT O.oproom_id FROM OperatingRooms O WHERE O.oproom_id NOT IN "
             		+ "(SELECT P.oproom_id FROM Performs P WHERE P.performs_date=TO_DATE('" + date + "', 'DD-MM-YYYY'))";
             Statement stmt = con.createStatement();
@@ -786,9 +775,8 @@ public class HospitalDatabase implements ActionListener {
                 }
                 System.out.println("\n");
             }
-            
-            
-            System.out.println("\nOperating rooms booked for procedures:\n")
+
+            System.out.println("\nOperating rooms booked for procedures:\n");
             String query2 = "SELECT F.oproom_id, P.proc_name FROM Performs F, Procedure P WHERE F.performs_date=TO_DATE('" + date + "', 'DD-MM-YYYY') AND F.proc_id=P.proc_id";
             Statement stmt2 = con.createStatement();
             ResultSet rs2 = stmt2.executeQuery(query2);
@@ -830,7 +818,6 @@ public class HospitalDatabase implements ActionListener {
         }   
     }
     
-    
     /*
      * find procedures with doctors for a given date
      */
@@ -838,9 +825,8 @@ public class HospitalDatabase implements ActionListener {
         try {
             System.out.print("\nEnter the date in the format DD-MM-YYYY: ");
             String date = in.readLine();
-        
-            
-            System.out.println("Procedures on given date:\n")
+
+            System.out.println("Procedures on given date:\n");
             String query = "SELECT P.proc_name, D.do_name FROM Procedures P, Performs F, Doctors D "
             		+ "WHERE F.performs_date=TO_DATE('" + date + "', 'DD-MM-YYYY') AND F.proc_id=P.proc_id AND D.do_id=F.do_id";
             Statement stmt = con.createStatement();
@@ -881,7 +867,6 @@ public class HospitalDatabase implements ActionListener {
             System.out.println("Message: " + ex.getMessage());
         }   
     }
-    
     
     /*
      * run sql directly
