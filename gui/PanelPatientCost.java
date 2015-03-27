@@ -82,7 +82,7 @@ public class PanelPatientCost extends WizardGUIPanel {
 	public void next() {
 		Object value = input.getValue();
 		int pid = Integer.parseInt(((String) value));
-		DatabaseConnection.getInstance().billPatient(pid);
+//		DatabaseConnection.getInstance().billPatient(pid); //TODO
 		switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);	
 	}
 
