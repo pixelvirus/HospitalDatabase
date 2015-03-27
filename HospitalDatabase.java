@@ -902,7 +902,7 @@ public class HospitalDatabase implements ActionListener {
             }
             String query = "Select D.do_name, B.AveCost From  Doctors D, " + 
             	"(Select P.do_id, Avg(M.cost) AS AveCost From Prescribes P, Medications M " +
-        	"WHERE P.med_id=M.med_id Group By P.do_id) As B Where B.AveCost=(Select " + maxMin + "(A.AveCost) " +
+        	"WHERE P.med_id=M.med_id Group By P.do_id) B Where B.AveCost=(Select " + maxMin + "(A.AveCost) " +
                 "From ( Select P.do_id, Avg(M.cost) AS AveCost From Medications M, Prescribes P " +
                 "WHERE M.med_id=P.med_id Group By P.do_id) A) AND B.do_id=D.do_id";
             Statement stmt = con.createStatement();
