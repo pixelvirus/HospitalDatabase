@@ -81,7 +81,7 @@ public class DynamicWizardGUI extends JWizardFrame {
 		panel = new PanelShowTable(getWizardComponents());
 		getWizardComponents().addWizardPanel(PANEL_SHOW_TABLE, panel);
 
-		panel = new PanelStub(getWizardComponents());
+		panel = new PanelProjection(getWizardComponents());
 		getWizardComponents().addWizardPanel(PANEL_PROJECTION, panel);
 
 		setSize(800, 600);

@@ -25,7 +25,7 @@ public class PanelViewOptions extends WizardGUIPanel {
 		list.setModel(new AbstractListModel() {
 			String[] values = new String[] {
 					"1.  Enter Projection and/or Selection criteria", 
-					"2.  View entire table"};
+			"2.  View entire table"};
 			public int getSize() {
 				return values.length;
 			}
@@ -57,6 +57,10 @@ public class PanelViewOptions extends WizardGUIPanel {
 	public void next() {
 		switch (getListSelection()) {
 		case 1:
+			PanelProjection projection =(PanelProjection)  getWizardComponents()
+			.getWizardPanel(DynamicWizardGUI.PANEL_PROJECTION);
+			projection.setTableName(tableName);
+
 			switchPanel(DynamicWizardGUI.PANEL_PROJECTION);
 			break;
 		case 2:
@@ -76,7 +80,7 @@ public class PanelViewOptions extends WizardGUIPanel {
 			this.getConsoleLog().append("error: not a valid option\n");
 		}
 	}
-	
+
 	@Override
 	public void back() {
 		switchPanel(DynamicWizardGUI.PANEL_TABLE_OPTIONS);

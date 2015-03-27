@@ -45,14 +45,37 @@ public class PanelTableOptions extends WizardGUIPanel {
 		list.setSelectedIndex(3);
 	}
 
+	/**
+	 * @return Integer representing the option not the index.
+	 */
+	private int getListSelection() { 
+		return list.getSelectedIndex() + 1;
+	}
+
 	@Override
 	public void next() {
-		PanelViewOptions viewOptions = (PanelViewOptions) getWizardComponents()
-				.getWizardPanel(DynamicWizardGUI.PANEL_VIEW_OPTIONS);
-		viewOptions.setTableName(tableName);
-		switchPanel(DynamicWizardGUI.PANEL_VIEW_OPTIONS);
+		switch (getListSelection()) {
+		case 1:
+			this.getConsoleLog().append("warning: unimplemented function\n");
+			break;
+		case 2:
+			this.getConsoleLog().append("warning: unimplemented function\n");
+			break;
+		case 3:
+			this.getConsoleLog().append("warning: unimplemented function\n");
+			break;
+		case 4:
+			PanelViewOptions viewOptions 
+			= (PanelViewOptions) getWizardComponents()
+			.getWizardPanel(DynamicWizardGUI.PANEL_VIEW_OPTIONS);
+			viewOptions.setTableName(tableName);
+			switchPanel(DynamicWizardGUI.PANEL_VIEW_OPTIONS);
+			break;
+		default:
+			this.getConsoleLog().append("error: not a valid option\n");
+		}
 	}
-	
+
 	@Override
 	public void back() {
 		switchPanel(DynamicWizardGUI.PANEL_MOD_VIEW);
