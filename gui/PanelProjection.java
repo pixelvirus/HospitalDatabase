@@ -4,26 +4,28 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.sql.SQLException;
+
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import database.DatabaseConnection;
-
 import jwizardcomponent.JWizardComponents;
 
 @SuppressWarnings("serial")
-public class PanelDoctorSpecialty extends WizardGUIPanel {
+public class PanelProjection extends WizardGUIPanel {
 
 	private final JPanel panel = new JPanel();
 
 	private final JLabel label 
-	= new JLabel("Please enter the specialization to search:");
+	= new JLabel("Please enter values to perform projection");
 
 	private final JFormattedTextField input = new JFormattedTextField();
 
-	public PanelDoctorSpecialty(JWizardComponents wizardComponents) {
-		super(wizardComponents, "Find doctors with a given specialty.");
+	private String tableName = "";
+
+	public PanelProjection(JWizardComponents wizardComponents) {
+		super(wizardComponents, "Project table");
 		initGUI();
 	}
 
@@ -33,7 +35,8 @@ public class PanelDoctorSpecialty extends WizardGUIPanel {
 		gbl_panel.columnWidths = new int[]{446, 0};
 		gbl_panel.rowHeights = new int[]{16, 0, 0, 0, 0, 0};
 		gbl_panel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 
+				Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 
 		GridBagConstraints gbc_lblSQL = new GridBagConstraints();
@@ -55,19 +58,29 @@ public class PanelDoctorSpecialty extends WizardGUIPanel {
 	}
 
 	@Override
+	public void update() {
+		this.getWizardComponents().getNextButton().setEnabled(true);
+	}
+
+	@Override
 	public void back() {
-		switchPanel(DynamicWizardGUI.PANEL_MENU);
+		switchPanel(DynamicWizardGUI.PANEL_VIEW_OPTIONS);
 	}
 
 	@Override
 	public void next() {
 		Object value = input.getText();
-		String spec = ((String) value).trim();
-		// check the input is in letters a-z only and no more than 20 char.
-		boolean legal = spec.matches("[a-zA-Z]{0,20}");
+		String attributes = ((String) value).trim();
+		// check the input are words spearated by commas.
+		boolean legal = attributes.matches("^[a-zA-Z]+(,\\s*[a-zA-Z]+)*$");
 		if (legal) {
 			try {
-				DatabaseConnection.getInstance().findSpec(spec);
+				PanelShowTable showTable = (PanelShowTable) getWizardComponents()
+						.getWizardPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
+
+				showTable.setTableName(tableName);
+
+				DatabaseConnection.getInstance().projectTable(attributes);
 				switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
 			} catch (SQLException e) {
 				this.getConsoleLog().append(e.getMessage());
@@ -75,8 +88,13 @@ public class PanelDoctorSpecialty extends WizardGUIPanel {
 		} else {
 			input.setText("");
 			this.getConsoleLog()
-			.append("Please only use letter a-z and less than 20 characters");
+			.append("Please only use case-insensitive words contain letter a-z"
+					+" separated by comma\n.");
 		}
+	}
+
+	void setTableName(String name) {
+		tableName = name.trim();
 	}
 
 }

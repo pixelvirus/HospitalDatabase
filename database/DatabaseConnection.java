@@ -80,6 +80,13 @@ public class DatabaseConnection extends Observable {
 		String query = "SELECT * FROM " + tableName;
 		shipSQLtoOracle(query);
 	}
+	
+	public void projectTable(String values) throws SQLException {
+		if (tableName == null)
+			return;
+		String query = "SELECT " + values + " FROM " + tableName;
+		shipSQLtoOracle(query);
+	}
 
 	public void billPatient(int pid) throws SQLException {
 		String query = "SELECT Sum(P.cost) " 
