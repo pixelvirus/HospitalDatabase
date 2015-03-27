@@ -777,7 +777,7 @@ public class HospitalDatabase implements ActionListener {
             }
 
             System.out.println("\nOperating rooms booked for procedures:\n");
-            String query2 = "SELECT F.oproom_id, P.proc_name FROM Performs F, Procedure P WHERE F.performs_date=TO_DATE('" + date + "', 'DD-MM-YYYY') AND F.proc_id=P.proc_id";
+            String query2 = "SELECT F.oproom_id, P.proc_name FROM Performs F, Procedures P WHERE F.performs_date=TO_DATE('" + date + "', 'DD-MM-YYYY') AND F.proc_id=P.proc_id";
             Statement stmt2 = con.createStatement();
             ResultSet rs2 = stmt2.executeQuery(query2);
             ResultSetMetaData rsMetaData2 = rs2.getMetaData();
