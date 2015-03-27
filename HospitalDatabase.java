@@ -173,22 +173,25 @@ public class HospitalDatabase implements ActionListener {
 
             while (!quit) {
                 System.out.print("\n\nPlease choose an option: \n");
-                System.out.print("1.  Output total costs for a patient.\n");
-                System.out.print("2.  Find doctors with a given specialty.\n");
-                System.out.print("3.  Find average cost of commonly prescribed medications.\n");
-                System.out.print("4.  Find doctors who have done procedures in every operating room.\n");
-                System.out.print("5.  Find all procedures a doctor has or will perform.\n");
-                System.out.print("6.  Find all medications and procedures for a patient.\n");
-                System.out.print("7.  Find all patients currently admitted to recovery rooms.\n");
-                System.out.print("8.  Modify or view an existing table\n");
-                System.out.print("9.  Run sql directly (e.g. create or drop table)\n");
-                System.out.print("10.  Quit\n>> ");
+                System.out.print("1.   Find total costs for a patient.\n");
+                System.out.print("2.   Find doctors with a given specialty.\n");
+                System.out.print("3.   Find average cost of commonly prescribed medications.\n");
+                System.out.print("4.   Find doctors who have done procedures in every operating room.\n");
+                System.out.print("5.   Find all procedures scheduled for a doctor.\n");
+                System.out.print("6.   Find all medications and procedures for a patient.\n");
+                System.out.print("7.   Find all patients currently admitted to recovery rooms.\n");
+                System.out.print("8.   Find all procedures on a given date.\n");
+                System.out.print("9.   Find available recovery room beds.\n");
+                System.out.print("10.  Find available operating rooms and list sceduled procedures.\n");
+                System.out.print("11.  View or modify tables.\n");
+                System.out.print("12.  Run sql directly (e.g. create or drop table)\n");
+                System.out.print("13.  Quit\n>> ");
 
                 boolean cond = true;
                 while (cond) {
                     try {
                         choice = Integer.parseInt(in.readLine());
-                        if (choice >= 1 && choice <= 7) {
+                        if (choice >= 1 && choice <= 13) {
                             cond = false;
                         } else {
                             System.out.println("Please enter an available option!");
@@ -221,12 +224,21 @@ public class HospitalDatabase implements ActionListener {
                         findPatientsInRecovery();
                         break;
                     case 8:
+                    	getProceduresOnDate();
+                    	break;
+                    case 9:
+                    	findAvailableRecoveryRoomBeds();
+                    	break;
+                    case 10:
+                    	checkOperatingRooms();
+                    	break;
+                    case 11:
                         chooseTable();
                         break;
-                    case 9:
+                    case 12:
                         runSql();
                         break;
-                    case 10:
+                    case 13:
                         quit = true;
                 }
             }
@@ -247,7 +259,6 @@ public class HospitalDatabase implements ActionListener {
         }
     }
 
-    
     /*
      * generate a patient's bill
      */
@@ -365,7 +376,6 @@ public class HospitalDatabase implements ActionListener {
         }   
     }
     
-    
     /*
      * find doctors with a given specialty
      */
@@ -413,7 +423,6 @@ public class HospitalDatabase implements ActionListener {
         }   
     }
     
-    
     /*
      * find ave cost of medications prescribed to at least 5 different patients
      */
@@ -436,7 +445,6 @@ public class HospitalDatabase implements ActionListener {
             System.out.println("Message: " + ex.getMessage());
         }   
     }
-    
     
     /*
      * find all doctors who have done procedures in all operating rooms
@@ -482,7 +490,6 @@ public class HospitalDatabase implements ActionListener {
             System.out.println("Message: " + ex.getMessage());
         }   
     }
-
     
     /*
      * Find all procedures a given doctor has/will perform
@@ -542,8 +549,6 @@ public class HospitalDatabase implements ActionListener {
             System.out.println("Message: " + ex.getMessage());
         }   
     }
-    
-    
     
     /*
      * get all procedures and medication for a given patient, including date and doctor
@@ -641,7 +646,6 @@ public class HospitalDatabase implements ActionListener {
         }   
     }
     
-    
     /*
      * get all patients currently in recovery
      */
@@ -685,6 +689,184 @@ public class HospitalDatabase implements ActionListener {
         }   
     }
     
+    /*
+     * Find empty recovery room beds
+     */
+    private void findAvailableRecoveryRoomBeds() {
+        try {
+            System.out.println("Available recovery room beds:\n");
+            String query = "SELECT * FROM RecoveryRoomBeds R WHERE NOT EXISTS "
+            		+ "(SELECT A.recoveryroom_id, A.recoveryroombed_bedNo FROM AdmittedTo A "
+            		+ "WHERE A.recoveryroom_id=R.recoveryroom_id AND A.recoveryroombed_bedNo=R.recoveryroombed_bedNo)";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            ResultSetMetaData rsMetaData = rs.getMetaData();
+
+            // get number of columns
+            int numCols = rsMetaData.getColumnCount();
+
+            ArrayList<String> availableColumns = new ArrayList<String>();
+            ArrayList<Integer> columnWidths = new ArrayList<Integer>();
+
+            // display column names
+            for (int i = 1; i <= numCols; i++) {
+                int displaySize = rsMetaData.getColumnDisplaySize(i) + 1;
+                String columnName = rsMetaData.getColumnName(i);
+                availableColumns.add(columnName);
+                columnWidths.add(displaySize);
+                System.out.printf("%-" + displaySize + "." + displaySize + "s", columnName);
+            }
+            System.out.println("\n");
+
+            // display rows
+            while (rs.next()) {
+                for (int i = 0; i < numCols; i++) {
+                    String columnName = availableColumns.get(i);
+                    Integer columnSize = columnWidths.get(i);
+                    String rowData = rs.getString(columnName);
+                    System.out.printf("%-" + columnSize + "." + columnSize + "s", rowData);
+                }
+                System.out.println("\n");
+            }
+            stmt.close();
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }   
+    }
+    
+    /*
+     * find which operating rooms are avilable and which are booked with procedures
+     */
+    private void checkOperatingRooms() {
+        try {
+            System.out.print("\nEnter the date in the format DD-MM-YYYY: ");
+            String date = in.readLine();
+            
+            System.out.println("Available operating rooms:\n");
+            String query = "SELECT O.oproom_id FROM OperatingRooms O WHERE O.oproom_id NOT IN "
+            		+ "(SELECT P.oproom_id FROM Performs P WHERE P.performs_date=TO_DATE('" + date + "', 'DD-MM-YYYY'))";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            ResultSetMetaData rsMetaData = rs.getMetaData();
+
+            // get number of columns
+            int numCols = rsMetaData.getColumnCount();
+
+            ArrayList<String> availableColumns = new ArrayList<String>();
+            ArrayList<Integer> columnWidths = new ArrayList<Integer>();
+
+            // display column names
+            for (int i = 1; i <= numCols; i++) {
+                int displaySize = rsMetaData.getColumnDisplaySize(i) + 1;
+                String columnName = rsMetaData.getColumnName(i);
+                availableColumns.add(columnName);
+                columnWidths.add(displaySize);
+                System.out.printf("%-" + displaySize + "." + displaySize + "s", columnName);
+            }
+            System.out.println("\n");
+
+            // display rows
+            while (rs.next()) {
+                for (int i = 0; i < numCols; i++) {
+                    String columnName = availableColumns.get(i);
+                    Integer columnSize = columnWidths.get(i);
+                    String rowData = rs.getString(columnName);
+                    System.out.printf("%-" + columnSize + "." + columnSize + "s", rowData);
+                }
+                System.out.println("\n");
+            }
+
+            System.out.println("\nOperating rooms booked for procedures:\n");
+            String query2 = "SELECT F.oproom_id, P.proc_name FROM Performs F, Procedures P WHERE F.performs_date=TO_DATE('" + date + "', 'DD-MM-YYYY') AND F.proc_id=P.proc_id";
+            Statement stmt2 = con.createStatement();
+            ResultSet rs2 = stmt2.executeQuery(query2);
+            ResultSetMetaData rsMetaData2 = rs2.getMetaData();
+
+            // get number of columns
+            int numCols2 = rsMetaData2.getColumnCount();
+
+            ArrayList<String> availableColumns2 = new ArrayList<String>();
+            ArrayList<Integer> columnWidths2 = new ArrayList<Integer>();
+
+            // display column names
+            for (int i = 1; i <= numCols2; i++) {
+                int displaySize2 = rsMetaData2.getColumnDisplaySize(i) + 1;
+                String columnName2 = rsMetaData2.getColumnName(i);
+                availableColumns2.add(columnName2);
+                columnWidths2.add(displaySize2);
+                System.out.printf("%-" + displaySize2 + "." + displaySize2 + "s", columnName2);
+            }
+            System.out.println("\n");
+
+            // display rows
+            while (rs2.next()) {
+                for (int i = 0; i < numCols2; i++) {
+                    String columnName2 = availableColumns2.get(i);
+                    Integer columnSize2 = columnWidths2.get(i);
+                    String rowData2 = rs2.getString(columnName2);
+                    System.out.printf("%-" + columnSize2 + "." + columnSize2 + "s", rowData2);
+                }
+                System.out.println("\n");
+            }
+            
+            stmt.close();
+            stmt2.close();
+        } catch(IOException e){
+            System.out.println("IOException!");
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }   
+    }
+    
+    /*
+     * find procedures with doctors for a given date
+     */
+    private void getProceduresOnDate() {
+        try {
+            System.out.print("\nEnter the date in the format DD-MM-YYYY: ");
+            String date = in.readLine();
+
+            System.out.println("Procedures on given date:\n");
+            String query = "SELECT P.proc_name, D.do_name FROM Procedures P, Performs F, Doctors D "
+            		+ "WHERE F.performs_date=TO_DATE('" + date + "', 'DD-MM-YYYY') AND F.proc_id=P.proc_id AND D.do_id=F.do_id";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            ResultSetMetaData rsMetaData = rs.getMetaData();
+
+            // get number of columns
+            int numCols = rsMetaData.getColumnCount();
+
+            ArrayList<String> availableColumns = new ArrayList<String>();
+            ArrayList<Integer> columnWidths = new ArrayList<Integer>();
+
+            // display column names
+            for (int i = 1; i <= numCols; i++) {
+                int displaySize = rsMetaData.getColumnDisplaySize(i) + 1;
+                String columnName = rsMetaData.getColumnName(i);
+                availableColumns.add(columnName);
+                columnWidths.add(displaySize);
+                System.out.printf("%-" + displaySize + "." + displaySize + "s", columnName);
+            }
+            System.out.println("\n");
+
+            // display rows
+            while (rs.next()) {
+                for (int i = 0; i < numCols; i++) {
+                    String columnName = availableColumns.get(i);
+                    Integer columnSize = columnWidths.get(i);
+                    String rowData = rs.getString(columnName);
+                    System.out.printf("%-" + columnSize + "." + columnSize + "s", rowData);
+                }
+                System.out.println("\n");
+            }
+            
+            stmt.close();
+        } catch(IOException e){
+            System.out.println("IOException!");
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }   
+    }
     
     /*
      * run sql directly
