@@ -183,9 +183,10 @@ public class HospitalDatabase implements ActionListener {
                 System.out.print("8.   Find all procedures on a given date.\n");
                 System.out.print("9.   Find available recovery room beds.\n");
                 System.out.print("10.  Find available operating rooms and list sceduled procedures.\n");
-                System.out.print("11.  View or modify tables.\n");
-                System.out.print("12.  Run sql directly (e.g. create or drop table)\n");
-                System.out.print("13.  Quit\n>> ");
+                System.out.print("11.  Find doctor with the minimum or maximum average medication cost.\n
+                System.out.print("12.  View or modify tables.\n");
+                System.out.print("13.  Run sql directly (e.g. create or drop table)\n");
+                System.out.print("14.  Quit\n>> ");
 
                 boolean cond = true;
                 while (cond) {
@@ -233,12 +234,15 @@ public class HospitalDatabase implements ActionListener {
                     	checkOperatingRooms();
                     	break;
                     case 11:
+                    	getMaxMinAveMedDoc();
+                    	break;
+                    case 12:
                         chooseTable();
                         break;
-                    case 12:
+                    case 13:
                         runSql();
                         break;
-                    case 13:
+                    case 14:
                         quit = true;
                 }
             }
@@ -867,6 +871,77 @@ public class HospitalDatabase implements ActionListener {
             System.out.println("Message: " + ex.getMessage());
         }   
     }
+    
+    
+    /*
+     * Find doctor who prescribes most or least expensive average medications of doctors who prescribe medications
+     */
+    private void getMaxMinAveMedDoc() {
+        try {
+            System.out.print("\nEnter '1' to find doctor with minimum average medication cost (of those prescribe), or '2' for maximum.\n");
+            int choice=0;
+            boolean cond = true;
+            while (cond) {
+                try {
+                	choice = Integer.parseInt(in.readLine());
+                    if (choice >= 1 && choice <= 2) {
+                        cond = false;
+                    } else {
+                        System.out.println("Please enter an available option!");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Your input must contain valid integers only! Try again: ");
+                }
+            }
+        
+            String maxMin;
+            if (choice == 1){
+            	maxMin = MIN;
+            } else if (choice == 2) {
+            	maxMin = MAX;
+            }
+            String query = "SELECT D.do_name, " + maxMin + "(A.AveCost) FROM Doctors D, "
+            		+ "(SELECT P.do_id, AVG(M.cost) AS AveCost FROM Medications M, Prescribes P, Doctors D "
+            		+ "WHERE M.med_id=P.med_id GROUP BY P.do_id) A WHERE A.do_id=D.do_id";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            ResultSetMetaData rsMetaData = rs.getMetaData();
+
+            // get number of columns
+            int numCols = rsMetaData.getColumnCount();
+
+            ArrayList<String> availableColumns = new ArrayList<String>();
+            ArrayList<Integer> columnWidths = new ArrayList<Integer>();
+
+            // display column names
+            for (int i = 1; i <= numCols; i++) {
+                int displaySize = rsMetaData.getColumnDisplaySize(i) + 20;
+                String columnName = rsMetaData.getColumnName(i);
+                availableColumns.add(columnName);
+                columnWidths.add(displaySize);
+                System.out.printf("%-" + displaySize + "." + displaySize + "s", columnName);
+            }
+            System.out.println("\n");
+
+            // display rows
+            while (rs.next()) {
+                for (int i = 0; i < numCols; i++) {
+                    String columnName = availableColumns.get(i);
+                    Integer columnSize = columnWidths.get(i);
+                    String rowData = rs.getString(columnName);
+                    System.out.printf("%-" + columnSize + "." + columnSize + "s", rowData);
+                }
+                System.out.println("\n");
+            }
+
+            stmt.close();
+        } catch(IOException e){
+            System.out.println("IOException!");
+        } catch (SQLException ex) {
+            System.out.println("Message: " + ex.getMessage());
+        }   
+    }
+    
     
     /*
      * run sql directly
