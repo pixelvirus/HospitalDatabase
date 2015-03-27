@@ -695,7 +695,7 @@ public class HospitalDatabase implements ActionListener {
     private void findAvailableRecoveryRoomBeds() {
         try {
             System.out.println("Available recovery room beds:\n");
-            String query = "SELECT recoveryroom_id, recoveryroombed_bedNo FROM RecoveryRoomBeds R WHERE recoveryroom_id, recoveryroombed_bedNo NOT IN "
+            String query = "SELECT * FROM RecoveryRoomBeds R WHERE NOT EXISTS "
             		+ "(SELECT A.recoveryroom_id, A.recoveryroombed_bedNo FROM AdmittedTo A "
             		+ "WHERE A.recoveryroom_id=R.recoveryroom_id AND A.recoveryroombed_bedNo=R.recoveryroombed_bedNo)";
             Statement stmt = con.createStatement();
