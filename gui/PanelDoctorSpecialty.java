@@ -3,14 +3,13 @@ package gui;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.text.ParseException;
-
+import java.sql.SQLException;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.text.MaskFormatter;
 
 import database.DatabaseConnection;
+
 import jwizardcomponent.JWizardComponents;
 
 @SuppressWarnings("serial")
@@ -56,19 +55,30 @@ public class PanelDoctorSpecialty extends WizardGUIPanel {
 		input.setColumns(10);
 		input.requestFocusInWindow();
 	}
-	
+
 	@Override
 	public void back() {
 		switchPanel(DynamicWizardGUI.PANEL_MENU);
 	}
-	
+
 	@Override
 	public void next() {
 		Object value = input.getText();
 		String spec = ((String) value).trim();
-		// Do type check before shipping to oracle
-		DatabaseConnection.getInstance().findSpec(spec);
-		switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
+		// check the input is in letters a-z only and no more than 20 char.
+		boolean legal = spec.matches("[a-zA-Z]{0,20}");
+		if (legal) {
+			try {
+				DatabaseConnection.getInstance().findSpec(spec);
+				switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
+			} catch (SQLException e) {
+				this.getConsoleLog().append(e.getMessage());
+			}
+		} else {
+			input.setText("");
+			this.getConsoleLog()
+			.append("Please only use letter a-z and less than 20 characters");
+		}
 	}
 
 }

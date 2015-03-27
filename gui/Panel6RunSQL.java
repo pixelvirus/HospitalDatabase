@@ -1,23 +1,30 @@
 package gui;
 
 import jwizardcomponent.JWizardComponents;
+
 import javax.swing.JPanel;
+
 import java.awt.BorderLayout;
+
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+
+import database.DatabaseConnection;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.sql.SQLException;
 
 @SuppressWarnings("serial")
 public class Panel6RunSQL extends WizardGUIPanel {
 	private final JPanel panel = new JPanel();
 	private final JLabel lblSQL = new JLabel("Please enter the SQL command in the text field below:");
-	private final JTextField textField = new JTextField();
+	private final JTextField input = new JTextField();
 
 	public Panel6RunSQL(JWizardComponents wizardComponents) {
 		super(wizardComponents, "Run sql directly (e.g. create or drop table)");
-		textField.setColumns(10);
+		input.setColumns(10);
 		initGUI();
 	}
 	private void initGUI() {
@@ -42,7 +49,24 @@ public class Panel6RunSQL extends WizardGUIPanel {
 		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField.gridx = 0;
 		gbc_textField.gridy = 4;
-		panel.add(textField, gbc_textField);
+		panel.add(input, gbc_textField);
+	}
+	
+	@Override
+	public void back() {
+		switchPanel(DynamicWizardGUI.PANEL_MENU);
+	}
+	
+	@Override
+	public void next() {
+		Object value = input.getText();
+		String query = ((String) value).trim();
+		try {
+			DatabaseConnection.getInstance().shipSQLtoOracle(query);
+			switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
+		} catch (SQLException e) {
+			this.getConsoleLog().append(e.getMessage());
+		}
 	}
 	
 	

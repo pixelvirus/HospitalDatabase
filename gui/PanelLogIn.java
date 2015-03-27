@@ -16,7 +16,6 @@ import javax.swing.JTextField;
 
 import database.DatabaseConnection;
 import jwizardcomponent.JWizardComponents;
-import jwizardcomponent.JWizardPanel;
 
 @SuppressWarnings("serial")
 public class PanelLogIn extends WizardGUIPanel implements ActionListener {
@@ -101,7 +100,6 @@ public class PanelLogIn extends WizardGUIPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		boolean status;
 		try {
 			status = db.connect(usernameField.getText(), 

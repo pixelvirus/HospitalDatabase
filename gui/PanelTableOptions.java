@@ -4,13 +4,12 @@ import jwizardcomponent.JWizardComponents;
 
 import javax.swing.JList;
 import javax.swing.AbstractListModel;
-import javax.swing.ListModel;
 
 @SuppressWarnings("serial")
 public class PanelTableOptions extends WizardGUIPanel {
 	private String tableName;
-	private ListModel listModel;
 
+	@SuppressWarnings("rawtypes")
 	private final JList list = new JList();
 
 
@@ -24,10 +23,12 @@ public class PanelTableOptions extends WizardGUIPanel {
 		getSplitPane().setRightComponent(list);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	void setTableName(String name) {
 		tableName = name;
 		list.setModel(new AbstractListModel() {
-			String[] values = new String[] {"1.  Insert " + tableName, 
+			String[] values = new String[] {
+					"1.  Insert " + tableName, 
 					"2.  Delete " + tableName, 
 					"3.  Update " + tableName, 
 					"4.  Show " + tableName};

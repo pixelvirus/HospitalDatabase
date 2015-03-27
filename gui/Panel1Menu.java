@@ -1,9 +1,8 @@
 package gui;
 
 import jwizardcomponent.JWizardComponents;
-import jwizardcomponent.JWizardPanel;
 
-import java.awt.BorderLayout;
+import java.sql.SQLException;
 
 import javax.swing.JList;
 import javax.swing.AbstractListModel;
@@ -12,12 +11,14 @@ import database.DatabaseConnection;
 
 @SuppressWarnings("serial")
 public class Panel1Menu extends WizardGUIPanel {
+	@SuppressWarnings("rawtypes")
 	private final JList list = new JList();
 
 	public Panel1Menu(JWizardComponents wizardComponents) {
 		super(wizardComponents, "Please choose an option:");
 		initGUI();
 	}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void initGUI() {
 		list.setModel(new AbstractListModel() {
 			String[] values = new String[] {
@@ -57,12 +58,20 @@ public class Panel1Menu extends WizardGUIPanel {
 			switchPanel(DynamicWizardGUI.PANEL_DOCTOR_SPECIALTY);
 			break;
 		case 3:
-			DatabaseConnection.getInstance().findAveMedCost();
-			switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
+			try {
+				DatabaseConnection.getInstance().findAveMedCost();
+				switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
+			} catch (SQLException e) {
+				this.getConsoleLog().append(e.getMessage());
+			}
 			break;
 		case 4:
-			DatabaseConnection.getInstance().findAllORDocs();
-			switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
+			try {
+				DatabaseConnection.getInstance().findAllORDocs();
+				switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
+			} catch (SQLException e) {
+				this.getConsoleLog().append(e.getMessage());
+			}
 			break;
 		case 5:
 			switchPanel(DynamicWizardGUI.PANEL_MOD_VIEW);

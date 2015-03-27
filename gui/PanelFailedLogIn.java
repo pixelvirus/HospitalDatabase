@@ -2,8 +2,9 @@ package gui;
 
 import jwizardcomponent.JWizardComponents;
 import jwizardcomponent.JWizardPanel;
+
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 

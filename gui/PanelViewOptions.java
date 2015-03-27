@@ -1,5 +1,7 @@
 package gui;
 
+import java.sql.SQLException;
+
 import jwizardcomponent.JWizardComponents;
 
 import javax.swing.JList;
@@ -9,6 +11,7 @@ import database.DatabaseConnection;
 
 @SuppressWarnings("serial")
 public class PanelViewOptions extends WizardGUIPanel {
+	@SuppressWarnings("rawtypes")
 	private final JList list = new JList();
 	private String tableName = "";
 
@@ -16,6 +19,7 @@ public class PanelViewOptions extends WizardGUIPanel {
 		super(wizardComponents, "Please choose an option:");
 		initGUI();
 	}
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void initGUI() {
 		list.setModel(new AbstractListModel() {
 			String[] values = new String[] {
@@ -60,11 +64,15 @@ public class PanelViewOptions extends WizardGUIPanel {
 
 			showTable.setTableName(tableName);
 
-			DatabaseConnection.getInstance().addSelectAllToQuery();
-			switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
+			try {
+				DatabaseConnection.getInstance().addSelectAllToQuery();
+				switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
+			} catch (SQLException e) {
+				this.getConsoleLog().append(e.getMessage());
+			}
 			break;
 		default:
-			System.out.println("error: not a valid option");
+			this.getConsoleLog().append("error: not a valid option\n");
 		}
 	}
 	

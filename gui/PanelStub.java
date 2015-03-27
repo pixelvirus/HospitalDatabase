@@ -10,7 +10,7 @@ import jwizardcomponent.JWizardPanel;
 
 @SuppressWarnings("serial")
 public class PanelStub extends JWizardPanel {
-	private final JLabel lblIncorrectPasswordEntered = new JLabel("Stub for unimplemented panels");
+	private final JLabel label = new JLabel("Stub for unimplemented panels");
 
 	public PanelStub(JWizardComponents wizardComponents) {
 		super(wizardComponents, "Stub Panel");
@@ -19,9 +19,9 @@ public class PanelStub extends JWizardPanel {
 
 	private void initGUI() {
 		setLayout(new BorderLayout(0, 0));
-		lblIncorrectPasswordEntered.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setHorizontalAlignment(SwingConstants.CENTER);
 		
-		add(lblIncorrectPasswordEntered, BorderLayout.CENTER);	
+		add(label, BorderLayout.CENTER);	
 	}
 	
 	@Override

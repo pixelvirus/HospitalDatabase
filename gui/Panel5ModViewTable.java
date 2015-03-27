@@ -1,5 +1,7 @@
 package gui;
 
+import java.sql.SQLException;
+
 import jwizardcomponent.JWizardComponents;
 
 import javax.swing.JScrollPane;
@@ -11,12 +13,14 @@ import database.DatabaseConnection;
 @SuppressWarnings("serial")
 public class Panel5ModViewTable extends WizardGUIPanel {
 	private final JScrollPane scrollPane = new JScrollPane();
+	@SuppressWarnings("rawtypes")
 	private final JList list = new JList();
 
 	public Panel5ModViewTable(JWizardComponents wizardComponents) {
 		super(wizardComponents, "Modify or view an existing table");
 		initGUI();
 	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initGUI() {
 
 		getSplitPane().setRightComponent(scrollPane);
@@ -42,13 +46,6 @@ public class Panel5ModViewTable extends WizardGUIPanel {
 		scrollPane.setViewportView(list);
 	}
 
-	/**
-	 * @return Integer representing the option not the index.
-	 */
-	private int getListSelection() { 
-		return list.getSelectedIndex() + 1;
-	}
-
 	@Override
 	public void next() {
 		PanelTableOptions tableOptions = (PanelTableOptions)
@@ -59,8 +56,12 @@ public class Panel5ModViewTable extends WizardGUIPanel {
 		String[] names = selection.trim().split("\\s+");
 		tableOptions.setTableName(names[1]);
 		
-		DatabaseConnection.getInstance().addTableNameToQuery(names[1]);
-		switchPanel(DynamicWizardGUI.PANEL_TABLE_OPTIONS);
+		try {
+			DatabaseConnection.getInstance().addTableNameToQuery(names[1]);
+			switchPanel(DynamicWizardGUI.PANEL_TABLE_OPTIONS);
+		} catch (SQLException e) {
+			this.getConsoleLog().append(e.getMessage());
+		}
 	}
 	
 	@Override

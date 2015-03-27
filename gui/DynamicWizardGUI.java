@@ -21,9 +21,7 @@ import jwizardcomponent.frame.JWizardFrame;
 @SuppressWarnings("serial")
 public class DynamicWizardGUI extends JWizardFrame {
 
-//	public static final int PANEL_FAILED_LOGIN = 12;
 	public static final int PANEL_LOGIN = 0;
-//	public static final int PANEL_MENU = 11;
 	public static final int PANEL_PATIENT_COST = 1;
 	public static final int PANEL_DOCTOR_SPECIALTY = 2;
 	public static final int PANEL_MENU = 3;
@@ -35,7 +33,7 @@ public class DynamicWizardGUI extends JWizardFrame {
 	public static final int PANEL_SHOW_TABLE = 9;
 	public static final int PANEL_PROJECTION = 10;
 
-	private final DatabaseConnection db = DatabaseConnection.getInstance();
+	private DatabaseConnection db;
 
 
 	public DynamicWizardGUI() {
@@ -46,6 +44,13 @@ public class DynamicWizardGUI extends JWizardFrame {
 	private void iniGUI() {
 		setTitle("Hospital Database Application");
 
+		try {
+			db = DatabaseConnection.getInstance();
+		} catch (SQLException e3) {
+			// No oracle SQL driver found!
+			System.err.print(e3.getMessage());
+			System.exit(-1);
+		}
 		JWizardPanel panel = null;
 		panel = new PanelLogIn(getWizardComponents(), db);
 		getWizardComponents().addWizardPanel(PANEL_LOGIN, panel);
@@ -65,7 +70,7 @@ public class DynamicWizardGUI extends JWizardFrame {
 		panel = new Panel5ModViewTable(getWizardComponents());
 		getWizardComponents().addWizardPanel(PANEL_MOD_VIEW, panel);
 
-		panel = new PanelStub(getWizardComponents());
+		panel = new Panel6RunSQL(getWizardComponents());
 		getWizardComponents().addWizardPanel(PANEL_RUN_SQL, panel);
 
 		panel = new PanelTableOptions(getWizardComponents());

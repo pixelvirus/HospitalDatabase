@@ -20,7 +20,7 @@ public class PanelShowTable extends WizardGUIPanel implements Observer {
 	private String tableName = "";
 
 	public PanelShowTable(JWizardComponents wizardComponents) {
-		super(wizardComponents, "Table contents");
+		super(wizardComponents, "Table Content");
 		initGUI();
 	}
 	private void initGUI() {
@@ -29,11 +29,15 @@ public class PanelShowTable extends WizardGUIPanel implements Observer {
 		
 		scrollPane.setViewportView(table);
 		
-		DatabaseConnection.getInstance().addObserver(this);
+		try {
+			DatabaseConnection.getInstance().addObserver(this);
+		} catch (SQLException e) {
+			this.getConsoleLog().append(e.getMessage());
+		}
 	}
 	
 	void setTableName(String name) {
-		tableName = name;
+		tableName = name.trim();
 	}
 	
 	@Override
@@ -43,13 +47,14 @@ public class PanelShowTable extends WizardGUIPanel implements Observer {
 					.createModelFromResultSet((ResultSet) arg);
 			table.setModel(tableModel);
 		} catch (SQLException e) {
-			this.getConsoleLog().append("\n" + e.getMessage().trim());
+			this.getConsoleLog().append(e.getMessage());
 		}
 		
 	}
 	
 	@Override
 	public void update() {
+		setPanelTitle(tableName + " Table Content");
 		getWizardComponents().getNextButton().setEnabled(false);
 	}
 	

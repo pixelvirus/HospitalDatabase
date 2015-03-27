@@ -27,6 +27,7 @@ public abstract class WizardGUIPanel extends JWizardPanel {
 		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 
 		add(splitPane);
+		splitPane.setDividerLocation(80);
 		splitPane.setLeftComponent(splitPaneErrorLog);
 
 		splitPaneErrorLog.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
