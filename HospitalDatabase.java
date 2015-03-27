@@ -200,25 +200,25 @@ public class HospitalDatabase implements ActionListener {
 
                 switch (choice) {
                     case 1:
-                        genBill();
+                        generateBill();
                         break;
                     case 2:
-                        findSpec();
+                        findDoctorsOfSpecialization();
                         break;
                     case 3:
                         findAveMedCost();
                         break;
                     case 4:
-                        findAllORDocs();
+                        findDoctorsWhoPerformedInAllOpRooms();
                         break;
                     case 5:
-                        getProcForDoc();
+                        getProceduresForDoctor();
                         break;
                     case 6:
-                        getPRForPat();
+                        getProceduresForPatient();
                         break;
                     case 7:
-                        findAllRecPat();
+                        findPatientsInRecovery();
                         break;
                     case 8:
                         chooseTable();
@@ -251,7 +251,7 @@ public class HospitalDatabase implements ActionListener {
     /*
      * generate a patient's bill
      */
-    private void genBill() {
+    private void generateBill() {
         try {
             System.out.print("\nEnter patient's ID number: ");
             int pt_id=0;
@@ -369,7 +369,7 @@ public class HospitalDatabase implements ActionListener {
     /*
      * find doctors with a given specialty
      */
-    private void findSpec() {
+    private void findDoctorsOfSpecialization() {
         try {
             System.out.print("\nEnter a specialty: ");
             String spec = in.readLine();
@@ -441,7 +441,7 @@ public class HospitalDatabase implements ActionListener {
     /*
      * find all doctors who have done procedures in all operating rooms
      */
-    private void findAllORDocs() {
+    private void findDoctorsWhoPerformedInAllOpRooms() {
         try {
             System.out.println("Doctors who have done procedures in all operating rooms:");
             String query = "SELECT do_name FROM Doctors D WHERE NOT EXISTS "
@@ -487,21 +487,21 @@ public class HospitalDatabase implements ActionListener {
     /*
      * Find all procedures a given doctor has/will perform
      */
-    private void getProcForDoc() {
+    private void getProceduresForDoctor() {
         try {
             System.out.print("\nEnter doctor's ID number: ");
             int do_id=0;
             boolean cond = true;
             while (cond) {
                 try {
-                    pt_id = Integer.parseInt(in.readLine());
+                    do_id = Integer.parseInt(in.readLine());
                     cond = false;
                 } catch (NumberFormatException e) {
                     System.out.println("Your input must contain valid integers only! Try again: ");
                 }
             }
         
-            System.out.println("Doctor " + do_id + " has done the following procedures:\n")
+            System.out.println("Doctor " + do_id + " has done the following procedures:\n");
             
             String query = "SELECT P.proc_name, F.performs_date FROM Procedures P, Performs F WHERE F.do_id='" + do_id +"' AND F.proc_id=P.proc_id";
             Statement stmt = con.createStatement();
@@ -548,7 +548,7 @@ public class HospitalDatabase implements ActionListener {
     /*
      * get all procedures and medication for a given patient, including date and doctor
      */
-    private void getPRforPat() {
+    private void getProceduresForPatient() {
         try {
             System.out.print("\nEnter patient's ID number: ");
             int pt_id=0;
@@ -645,7 +645,7 @@ public class HospitalDatabase implements ActionListener {
     /*
      * get all patients currently in recovery
      */
-    private void findAllRecPat() {
+    private void findPatientsInRecovery() {
         try {
             System.out.println("Patients currently in recovery:\n");
             String query = "SELECT P.pt_name, A.recoveryroom_id, A.recoveryroombed_bedNo FROM AdmittedTo A, Patients P WHERE A.pt_id=P.pt_id";
@@ -743,9 +743,7 @@ public class HospitalDatabase implements ActionListener {
                 System.out.print("16.  HasAOffice\n");
                 System.out.print("17.  StaffUsers\n");
                 System.out.print("18.  PatientUsers\n");
-                System.out.print("19.  SUserHasA\n");
-                System.out.print("20.  PUserHasA\n");
-                System.out.print("21.  Back\n>> ");
+                System.out.print("19.  Back\n>> ");
 
                 try {
                     choice = Integer.parseInt(in.readLine());
@@ -812,12 +810,6 @@ public class HospitalDatabase implements ActionListener {
                         modifyTable("PatientUsers");
                         break;
                     case 19:
-                        modifyTable("SUserHasA");
-                        break;
-                    case 20:
-                        modifyTable("PUserHasA");
-                        break;
-                    case 21:
                         quit = true;
                 }
             }
