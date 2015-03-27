@@ -19,6 +19,7 @@ public class PanelViewOptions extends WizardGUIPanel {
 		super(wizardComponents, "Please choose an option:");
 		initGUI();
 	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void initGUI() {
 		list.setModel(new AbstractListModel() {

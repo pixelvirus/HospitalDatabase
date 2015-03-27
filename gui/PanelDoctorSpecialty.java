@@ -22,8 +22,6 @@ public class PanelDoctorSpecialty extends WizardGUIPanel {
 
 	private final JFormattedTextField input = new JFormattedTextField();
 
-
-
 	public PanelDoctorSpecialty(JWizardComponents wizardComponents) {
 		super(wizardComponents, "Find doctors with a given specialty.");
 		initGUI();

@@ -27,6 +27,7 @@ public class Panel6RunSQL extends WizardGUIPanel {
 		input.setColumns(10);
 		initGUI();
 	}
+
 	private void initGUI() {
 		
 		getSplitPane().setRightComponent(panel);
@@ -68,6 +69,4 @@ public class Panel6RunSQL extends WizardGUIPanel {
 			this.getConsoleLog().append(e.getMessage());
 		}
 	}
-	
-	
 }

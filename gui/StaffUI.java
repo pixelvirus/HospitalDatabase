@@ -73,6 +73,7 @@ public class StaffUI extends JFrame {
 		super("HospitalDatabase Staff View");
 		initGUI();
 	}
+
 	private void initGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 400);
@@ -105,7 +106,6 @@ public class StaffUI extends JFrame {
 		table = new JTable();
 		table.setFont(new Font("Lucida Grande", Font.PLAIN, 12));
 		scrollPane.setViewportView(table);
-
 
 		JPanel controlPanel = new JPanel();
 		contentPane.add(controlPanel, BorderLayout.WEST);
@@ -175,5 +175,4 @@ public class StaffUI extends JFrame {
 			}
 		});
 	}
-
 }

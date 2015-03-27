@@ -16,12 +16,12 @@ public class PanelFailedLogIn extends JWizardPanel {
 		super(wizardComponents, "Please restart the application");
 		initGUI();
 	}
+
 	private void initGUI() {
 		setLayout(new BorderLayout(0, 0));
 		lblIncorrectPasswordEntered.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		add(lblIncorrectPasswordEntered, BorderLayout.CENTER);
-		
 	}
 	
 	@Override
@@ -33,5 +33,4 @@ public class PanelFailedLogIn extends JWizardPanel {
 		getWizardComponents().getBackButton().setEnabled(false);
 		getWizardComponents().getNextButton().setEnabled(false);
 	}
-
 }
