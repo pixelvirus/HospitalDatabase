@@ -1,7 +1,5 @@
 package gui;
 
-import java.util.Observer;
-
 import jwizardcomponent.JWizardComponents;
 
 import javax.swing.JList;

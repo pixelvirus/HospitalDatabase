@@ -55,7 +55,7 @@ public class PanelShowTable extends WizardGUIPanel implements Observer {
 	
 	@Override
 	public void back() {
-		switchPanel(DynamicWizardGUI.PANEL_MOD_VIEW);
+		switchPanel(DynamicWizardGUI.PANEL_MENU);
 	}
 
 }

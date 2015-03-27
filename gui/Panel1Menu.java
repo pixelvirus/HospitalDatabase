@@ -8,6 +8,8 @@ import java.awt.BorderLayout;
 import javax.swing.JList;
 import javax.swing.AbstractListModel;
 
+import database.DatabaseConnection;
+
 @SuppressWarnings("serial")
 public class Panel1Menu extends WizardGUIPanel {
 	private final JList list = new JList();
@@ -55,10 +57,12 @@ public class Panel1Menu extends WizardGUIPanel {
 			switchPanel(DynamicWizardGUI.PANEL_DOCTOR_SPECIALTY);
 			break;
 		case 3:
-			switchPanel(DynamicWizardGUI.PANEL_AVG_COST_MED);
+			DatabaseConnection.getInstance().findAveMedCost();
+			switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
 			break;
 		case 4:
-			switchPanel(DynamicWizardGUI.PANEL_DOCTOR_ALL_OP);
+			DatabaseConnection.getInstance().findAllORDocs();
+			switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
 			break;
 		case 5:
 			switchPanel(DynamicWizardGUI.PANEL_MOD_VIEW);
