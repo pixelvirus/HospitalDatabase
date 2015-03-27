@@ -327,7 +327,7 @@ insert into recoveryrooms
 values('2','2');
 
 insert into recoveryrooms
-values('3','2');
+values('3','3');
 
 /*RecoveryRoomBeds*/
 insert into recoveryroombeds
@@ -344,6 +344,9 @@ values('3','1');
 
 insert into recoveryroombeds
 values('3','2');
+
+insert into recoveryroombeds
+values('3','3');
 
 /*BookingReservesRecoveryRooms*/
 insert into bookingreservesrecoveryrooms
