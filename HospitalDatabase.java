@@ -182,8 +182,8 @@ public class HospitalDatabase implements ActionListener {
                 System.out.print("7.   Find all patients currently admitted to recovery rooms.\n");
                 System.out.print("8.   Find all procedures on a given date.\n");
                 System.out.print("9.   Find available recovery room beds.\n");
-                System.out.print("10.  Find available operating rooms and list sceduled procedures.\n");
-                System.out.print("11.  Find doctor with the minimum or maximum average medication cost.\n
+                System.out.print("10.  Find available operating rooms and list scheduled procedures.\n");
+                System.out.print("11.  Find doctor with the minimum or maximum average medication cost.\n");
                 System.out.print("12.  View or modify tables.\n");
                 System.out.print("13.  Run sql directly (e.g. create or drop table)\n");
                 System.out.print("14.  Quit\n>> ");
@@ -894,11 +894,11 @@ public class HospitalDatabase implements ActionListener {
                 }
             }
         
-            String maxMin;
+            String maxMin = "";
             if (choice == 1){
-            	maxMin = MIN;
+            	maxMin = "MIN";
             } else if (choice == 2) {
-            	maxMin = MAX;
+            	maxMin = "MAX";
             }
             String query = "SELECT D.do_name, " + maxMin + "(A.AveCost) FROM Doctors D, "
             		+ "(SELECT P.do_id, AVG(M.cost) AS AveCost FROM Medications M, Prescribes P, Doctors D "
@@ -941,7 +941,6 @@ public class HospitalDatabase implements ActionListener {
             System.out.println("Message: " + ex.getMessage());
         }   
     }
-    
     
     /*
      * run sql directly
