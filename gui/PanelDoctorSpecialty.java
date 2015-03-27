@@ -67,7 +67,7 @@ public class PanelDoctorSpecialty extends WizardGUIPanel {
 		Object value = input.getText();
 		String spec = ((String) value).trim();
 		// Do type check before shipping to oracle
-//		DatabaseConnection.getInstance().findSpec(spec); //TODO
+		DatabaseConnection.getInstance().findSpec(spec);
 		switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
 	}
 

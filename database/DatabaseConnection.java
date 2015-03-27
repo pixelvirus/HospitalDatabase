@@ -1,7 +1,6 @@
 package database;
 
 import java.sql.*;
-
 import java.util.Observable;
 
 /**
@@ -10,10 +9,9 @@ import java.util.Observable;
  *
  */
 public class DatabaseConnection extends Observable {
-	
+
 	private static DatabaseConnection instance;
 	private Connection con;
-	private String sqlQuery = "";
 	private String tableName;
 	private ResultSet resultSet;
 
@@ -29,12 +27,12 @@ public class DatabaseConnection extends Observable {
 			System.exit(-1);
 		}
 	}
-	
+
 	public static DatabaseConnection getInstance() {
 		if (instance == null) {
 			instance = new DatabaseConnection();
 		}
-		
+
 		return instance;
 	}
 
@@ -74,22 +72,49 @@ public class DatabaseConnection extends Observable {
 			notifyObservers(resultSet);	
 		}
 	}
-	
+
 	public void addTableNameToQuery(String name) {
 		tableName = name;
 	}
-	
+
 	/**
 	 * Show all in the table
 	 */
 	public void addSelectAllToQuery() {
 		if (tableName == null)
 			return;
-		sqlQuery = "SELECT * FROM " + tableName;
-		shipSQLtoOracle(sqlQuery);
-		sqlQuery = "";
+		String query = "SELECT * FROM " + tableName;
+		shipSQLtoOracle(query);
 	}
-	
+
+	public void billPatient(int pid) {
+		String query = "SELECT Sum(P.cost) " 
+				+ "FROM Procedures P, Performs F "
+				+ "WHERE pt_id='" + pid + "' AND P.proc_id=F.proc_id";
+		shipSQLtoOracle(query);
+	}
+
+	public void findSpec(String spec) {
+		String query = "SELECT do_name FROM Doctors WHERE specialization='" 
+				+ spec + "'";
+		shipSQLtoOracle(query);
+	}
+
+	public void findAveMedCost() {
+		String query = "SELECT AVG(M.cost) FROM Medications M, Prescribes P " 
+				+ "WHERE P.med_id=M.med_id " 
+				+ "GROUP BY P.med_id " 
+				+ "HAVING 4<COUNT(DISTINCT P.pt_id)";
+		shipSQLtoOracle(query);
+	}
+
+	public void findAllORDocs() {
+		String query = "SELECT do_name FROM Doctors D WHERE NOT EXISTS "
+				+ "(SELECT O.oproom_id FROM OperatingRooms O WHERE NOT EXISTS "
+				+ "(SELECT O.oproom_id FROM Performs P WHERE P.do_id=D.do_id AND P.oproom_id=O.oproom_id))";
+		shipSQLtoOracle(query);
+	}
+
 	public ResultSet getResultSet() {
 		return resultSet;
 	}

@@ -57,13 +57,11 @@ public class Panel1Menu extends WizardGUIPanel {
 			switchPanel(DynamicWizardGUI.PANEL_DOCTOR_SPECIALTY);
 			break;
 		case 3:
-			switchPanel(DynamicWizardGUI.PANEL_AVG_COST_MED);
-//			DatabaseConnection.getInstance().findAveMedCost(); //TODO
+			DatabaseConnection.getInstance().findAveMedCost();
 			switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
 			break;
 		case 4:
-			switchPanel(DynamicWizardGUI.PANEL_DOCTOR_ALL_OP);
-//			DatabaseConnection.getInstance().findAllORDocs(); //TODO
+			DatabaseConnection.getInstance().findAllORDocs();
 			switchPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
 			break;
 		case 5:

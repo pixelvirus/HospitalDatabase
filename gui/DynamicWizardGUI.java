@@ -21,13 +21,13 @@ import jwizardcomponent.frame.JWizardFrame;
 @SuppressWarnings("serial")
 public class DynamicWizardGUI extends JWizardFrame {
 
-	public static final int PANEL_FAILED_LOGIN = 12;
+//	public static final int PANEL_FAILED_LOGIN = 12;
 	public static final int PANEL_LOGIN = 0;
-	public static final int PANEL_MENU = 11;
+//	public static final int PANEL_MENU = 11;
 	public static final int PANEL_PATIENT_COST = 1;
 	public static final int PANEL_DOCTOR_SPECIALTY = 2;
-	public static final int PANEL_AVG_COST_MED = 3;
-	public static final int PANEL_DOCTOR_ALL_OP = 4;
+	public static final int PANEL_MENU = 3;
+	public static final int PANEL_FAILED_LOGIN = 4;
 	public static final int PANEL_MOD_VIEW = 5;
 	public static final int PANEL_RUN_SQL = 6;
 	public static final int PANEL_TABLE_OPTIONS = 7;
@@ -50,17 +50,17 @@ public class DynamicWizardGUI extends JWizardFrame {
 		panel = new PanelLogIn(getWizardComponents(), db);
 		getWizardComponents().addWizardPanel(PANEL_LOGIN, panel);
 
-		panel = new PanelStub(getWizardComponents());
+		panel = new PanelPatientCost(getWizardComponents());
 		getWizardComponents().addWizardPanel(PANEL_PATIENT_COST, panel);
 
-		panel = new PanelStub(getWizardComponents());
+		panel = new PanelDoctorSpecialty(getWizardComponents());
 		getWizardComponents().addWizardPanel(PANEL_DOCTOR_SPECIALTY, panel);
 
-		panel = new PanelStub(getWizardComponents());
-		getWizardComponents().addWizardPanel(PANEL_AVG_COST_MED, panel);
+		panel = new Panel1Menu(getWizardComponents());
+		getWizardComponents().addWizardPanel(PANEL_MENU, panel);
 
-		panel = new PanelStub(getWizardComponents());
-		getWizardComponents().addWizardPanel(PANEL_DOCTOR_ALL_OP, panel);
+		panel = new PanelFailedLogIn(getWizardComponents());
+		getWizardComponents().addWizardPanel(PANEL_FAILED_LOGIN, panel);
 
 		panel = new Panel5ModViewTable(getWizardComponents());
 		getWizardComponents().addWizardPanel(PANEL_MOD_VIEW, panel);
@@ -80,11 +80,7 @@ public class DynamicWizardGUI extends JWizardFrame {
 		panel = new PanelStub(getWizardComponents());
 		getWizardComponents().addWizardPanel(PANEL_PROJECTION, panel);
 
-		panel = new Panel1Menu(getWizardComponents());
-		getWizardComponents().addWizardPanel(PANEL_MENU, panel);
-
-		panel = new PanelFailedLogIn(getWizardComponents());
-		getWizardComponents().addWizardPanel(PANEL_FAILED_LOGIN, panel);
+		
 
 		setSize(800, 600);
 		Utilities.centerComponentOnScreen(this);
