@@ -51,10 +51,13 @@ public abstract class WizardGUIPanel extends JWizardPanel {
 
 	@Override
 	public void update() {
-		getWizardComponents().getFinishButton().setText("");
-		getWizardComponents().getFinishButton().setEnabled(false);
-		getWizardComponents().getCancelButton().setText("Quit");
 		getWizardComponents().getBackButton().setText("Back");
 		getWizardComponents().getNextButton().setText("Next");
+		getWizardComponents().getFinishButton().setText("");
+		getWizardComponents().getCancelButton().setText("Quit");
+		
+		this.setBackButtonEnabled(true);
+		this.setNextButtonEnabled(true);
+		this.setFinishButtonEnabled(false);
 	}
 }

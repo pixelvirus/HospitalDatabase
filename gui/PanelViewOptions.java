@@ -57,14 +57,16 @@ public class PanelViewOptions extends WizardGUIPanel {
 	public void next() {
 		switch (getListSelection()) {
 		case 1:
-			PanelProjection projection =(PanelProjection)  getWizardComponents()
+			PanelProjection projection 
+			= (PanelProjection)  getWizardComponents()
 			.getWizardPanel(DynamicWizardGUI.PANEL_PROJECTION);
 			projection.setTableName(tableName);
 
 			switchPanel(DynamicWizardGUI.PANEL_PROJECTION);
 			break;
 		case 2:
-			PanelShowTable showTable = (PanelShowTable) getWizardComponents()
+			PanelShowTable showTable 
+			= (PanelShowTable) getWizardComponents()
 			.getWizardPanel(DynamicWizardGUI.PANEL_SHOW_TABLE);
 
 			showTable.setTableName(tableName);

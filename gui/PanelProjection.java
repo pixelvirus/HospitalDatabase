@@ -58,11 +58,6 @@ public class PanelProjection extends WizardGUIPanel {
 	}
 
 	@Override
-	public void update() {
-		this.getWizardComponents().getNextButton().setEnabled(true);
-	}
-
-	@Override
 	public void back() {
 		switchPanel(DynamicWizardGUI.PANEL_VIEW_OPTIONS);
 	}
