@@ -4,7 +4,7 @@ import java.util.*;
 import java.sql.*;
 
 
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "rawtypes", "unchecked" })
 public class ListTableModel extends RowTableModel<List>
 {
 	/**
@@ -124,7 +124,6 @@ public class ListTableModel extends RowTableModel<List>
 	 * @exception  IndexOutOfBoundsException  if an invalid row or
 	 *			   column was given
 	 */
-	@SuppressWarnings("unchecked")
 	public void setValueAt(Object value, int row, int column)
 	{
 		List rowData = getRow( row );
@@ -167,7 +166,6 @@ public class ListTableModel extends RowTableModel<List>
 	/*
 	 *  Make sure each List row contains the required number of columns.
 	 */
-	@SuppressWarnings("unchecked")
 	private void justifyRow(List rowData)
 	{
 		for (int i = rowData.size(); i < getColumnCount(); i++)

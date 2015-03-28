@@ -2,6 +2,9 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Font;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -10,33 +13,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JTable;
-import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 
 import model.SelectTableModel;
-
-import javax.swing.JFormattedTextField;
-
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-
-import javax.swing.SwingConstants;
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-import javax.swing.BoxLayout;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-
-import java.awt.Font;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 
 /**
  * Simple GUI for the HospitalDatabase Staff View
@@ -74,6 +57,7 @@ public class StaffUI extends JFrame {
 		initGUI();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 400);
